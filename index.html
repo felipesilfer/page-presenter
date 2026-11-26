@@ -4,8 +4,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Page Presenter — Demonstração</title>
+  <title>Page Presenter — Documentação</title>
   <link rel="stylesheet" href="page-presenter.css">
+  <link rel="stylesheet" href="page-presenter-deck.css">
   <style>
     /* Estilos apenas desta página de demonstração */
     body {
@@ -62,50 +63,564 @@
       border-left: 4px solid #008bd2;
       padding: 1.25rem;
     }
+
+    .status {
+      font-size: 0.9rem;
+      color: #475569;
+    }
+
+    kbd {
+      padding: 0 0.35rem;
+      font: 0.85em ui-monospace, monospace;
+      background: #eef2f6;
+      border: 1px solid #cbd5e1;
+      border-radius: 4px;
+    }
+
+    /* Documentação */
+    .toc {
+      columns: 2 14rem;
+      padding-left: 1.25rem;
+    }
+
+    #docs section + section {
+      margin-top: 2.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid #dbe3eb;
+    }
+
+    :is(#docs, .docs) h2 {
+      color: #004b82;
+    }
+
+    :is(#docs, .docs) table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+    }
+
+    :is(#docs, .docs) th,
+    :is(#docs, .docs) td {
+      padding: 0.45rem 0.6rem;
+      text-align: left;
+      vertical-align: top;
+      border-bottom: 1px solid #eef2f6;
+    }
+
+    :is(#docs, .docs) th {
+      background: #f4f6f9;
+    }
+
+    :is(#docs, .docs) pre {
+      padding: 1rem;
+      overflow-x: auto;
+      font: 0.85rem/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      color: #e2e8f0;
+      background: #0f172a;
+      border-radius: 8px;
+    }
+
+    :is(#docs, .docs) :not(pre) > code {
+      padding: 0 0.25rem;
+      font-size: 0.9em;
+      color: #1e293b;
+      background: #eef2f6;
+      border-radius: 4px;
+    }
+
+    .demos-title {
+      margin-top: 3rem;
+    }
+
+    /* Na apresentação, o sumário não faz sentido */
+    .presentation-slide .toc {
+      display: none;
+    }
   </style>
 </head>
 
 <body>
   <main>
     <h1>Page Presenter</h1>
-    <p>Transforma o conteúdo de uma página em uma apresentação de slides em tela cheia.</p>
 
     <div class="actions">
-      <button type="button" id="btn-present-article">Apresentar artigo</button>
+      <button type="button" id="btn-present-docs">Apresentar esta documentação</button>
+      <button type="button" id="btn-present-article">Apresentar artigo de exemplo</button>
       <button type="button" id="btn-present-deck">Apresentar roteiro próprio</button>
+      <button type="button" id="btn-notes">Abrir notas do apresentador</button>
     </div>
+    <!-- Atualizado pelo onChange das apresentações -->
+    <p class="status" id="status" aria-live="polite">Nenhuma apresentação aberta ainda.</p>
 
-    <!-- Exemplo 1: slides gerados a partir do conteúdo -->
+    <!-- Documentação: o mesmo conteúdo do README. Cada <section> vira um slide (sectionSelector padrão). -->
+    <article id="docs">
+      <p class="lead">Transforma o conteúdo de uma página HTML em uma <strong>apresentação de slides em tela
+          cheia</strong>. Feito só com HTML, CSS e JavaScript, sem dependências e sem etapa de build. Funciona abrindo
+        o arquivo direto no navegador (<code>file://</code>).</p>
+      <p>A página continua sendo a fonte do conteúdo. O módulo copia os blocos dela para os slides, sem alterar a
+        página original.</p>
+
+      <nav aria-label="Sumário">
+        <ol class="toc">
+          <li><a href="#doc-inicio">Início rápido</a></li>
+          <li><a href="#doc-arquivos">Arquivos</a></li>
+          <li><a href="#doc-montagem">Como os slides são montados</a></li>
+          <li><a href="#doc-opcoes">Opções de <code>open()</code></a></li>
+          <li><a href="#doc-navegacao">Navegação</a></li>
+          <li><a href="#doc-recursos">Recursos para apresentar</a></li>
+          <li><a href="#doc-componentes">Componentes de slide</a></li>
+          <li><a href="#doc-personalizacao">Personalização</a></li>
+          <li><a href="#doc-frameworks">Uso com Tailwind ou Bootstrap</a></li>
+          <li><a href="#doc-api">API</a></li>
+          <li><a href="#doc-compatibilidade">Compatibilidade e limitações</a></li>
+          <li><a href="#doc-testes">Testes</a></li>
+        </ol>
+      </nav>
+
+      <section id="doc-inicio">
+        <h2>Início rápido</h2>
+        <pre><code>&lt;link rel="stylesheet" href="page-presenter.css"&gt;
+&lt;link rel="stylesheet" href="page-presenter-deck.css"&gt; &lt;!-- opcional: visual dos slides --&gt;
+&lt;script src="page-presenter.js"&gt;&lt;/script&gt;
+
+&lt;button id="btn-apresentar"&gt;Apresentar&lt;/button&gt;
+
+&lt;article id="artigo"&gt;
+  &lt;p&gt;Introdução: vai para a capa.&lt;/p&gt;
+  &lt;section&gt;&lt;h2&gt;Primeiro tópico&lt;/h2&gt;&lt;p&gt;Vira um slide.&lt;/p&gt;&lt;/section&gt;
+  &lt;section&gt;&lt;h2&gt;Segundo tópico&lt;/h2&gt;&lt;p&gt;Vira outro slide.&lt;/p&gt;&lt;/section&gt;
+&lt;/article&gt;
+
+&lt;script&gt;
+  document.getElementById('btn-apresentar').addEventListener('click', () =&gt; {
+    PagePresenter.open({ source: '#artigo', title: 'Minha apresentação' });
+  });
+&lt;/script&gt;</code></pre>
+        <p>Chame <code>open()</code> a partir de um clique. Sem um gesto do usuário, o navegador recusa a tela cheia, e
+          a apresentação ocupa só a janela.</p>
+      </section>
+
+      <section id="doc-arquivos">
+        <h2>Arquivos</h2>
+        <table>
+          <thead>
+            <tr><th>Arquivo</th><th>Obrigatório</th><th>Conteúdo</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>page-presenter.js</code></td><td>sim</td><td>O módulo. Expõe o objeto global
+                <code>PagePresenter</code>.</td></tr>
+            <tr><td><code>page-presenter.css</code></td><td>sim</td><td>A moldura: overlay, slide ativo, botão ×, rodapé,
+                progresso, passos e notas. Também define as variáveis <code>--pp-*</code>.</td></tr>
+            <tr><td><code>page-presenter-deck.css</code></td><td>não</td><td>O tema dos slides: espaçamento entre blocos,
+                capa, fechamento e componentes <code>.deck-*</code>.</td></tr>
+            <tr><td><code>index.html</code></td><td>—</td><td>Esta documentação, com demonstrações de todos os
+                recursos.</td></tr>
+            <tr><td><code>tests.html</code></td><td>—</td><td>Testes: abra no navegador e confira se todas as linhas
+                ficam verdes.</td></tr>
+            <tr><td><code>test-tailwind.html</code>, <code>test-bootstrap.html</code></td><td>—</td><td>Testes de
+                convivência com Tailwind 4 e Bootstrap 5.3, carregados por CDN (precisam de internet).</td></tr>
+          </tbody>
+        </table>
+        <p>Sem o <code>page-presenter-deck.css</code>, a apresentação continua funcionando. Os slides passam a usar só
+          o CSS da sua página ou do seu framework.</p>
+      </section>
+
+      <section id="doc-montagem">
+        <h2>Como os slides são montados</h2>
+        <h3>A partir do conteúdo da página</h3>
+        <p>Com <code>open({ source: '#artigo' })</code>, os filhos diretos de <code>source</code> são distribuídos
+          assim:</p>
+        <ol>
+          <li><strong>Capa:</strong> a categoria, o título e todo o conteúdo que vem antes da primeira seção.</li>
+          <li><strong>Seções:</strong> cada filho que corresponde a <code>sectionSelector</code> (padrão:
+            <code>section</code>) vira um slide.</li>
+          <li><strong>Conteúdo solto</strong> entre seções entra no slide da seção anterior.</li>
+          <li><strong>Fechamento:</strong> filhos que correspondem a <code>closingSelector</code> viram um slide com
+            visual de fechamento.</li>
+        </ol>
+        <p>Os blocos são copiados sem IDs, para não duplicá-los, e sem <code>&lt;button&gt;</code>, que não
+          funcionariam no slide. Elementos com <code>hidden</code> continuam ocultos.</p>
+        <h3>Roteiro próprio</h3>
+        <p>Para escrever os slides à mão, coloque um <code>.presentation-deck</code> oculto como filho direto de
+          <code>source</code>. Cada <code>.deck-slide</code> vira um slide, e o resto do conteúdo é ignorado.
+          <code>data-variant="cover"</code> aplica o visual de capa.</p>
+        <pre><code>&lt;div id="artigo"&gt;
+  &lt;div class="presentation-deck" hidden&gt;
+    &lt;div class="deck-slide" data-variant="cover"&gt;
+      &lt;h1 class="deck-title"&gt;Slide de abertura&lt;/h1&gt;
+    &lt;/div&gt;
+    &lt;div class="deck-slide"&gt;
+      &lt;h2 class="deck-title"&gt;Segundo slide&lt;/h2&gt;
+      &lt;ol class="deck-flow"&gt;&lt;li&gt;Etapa 1&lt;/li&gt;&lt;li&gt;Etapa 2&lt;/li&gt;&lt;/ol&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+  ...conteúdo normal da página...
+&lt;/div&gt;</code></pre>
+      </section>
+
+      <section id="doc-opcoes">
+        <h2>Opções de <code>open()</code></h2>
+        <table>
+          <thead>
+            <tr><th>Opção</th><th>Padrão</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>source</code></td><td>—</td><td>Elemento de origem: seletor, elemento ou função que retorna
+                um deles.</td></tr>
+            <tr><td><code>title</code></td><td><code>document.title</code></td><td>Título da capa: texto ou
+                função.</td></tr>
+            <tr><td><code>category</code></td><td>—</td><td>Etiqueta acima do título da capa: texto ou função.</td></tr>
+            <tr><td><code>sectionSelector</code></td><td><code>'section'</code></td><td>Filhos diretos de
+                <code>source</code> que viram um slide cada.</td></tr>
+            <tr><td><code>closingSelector</code></td><td>—</td><td>Filhos diretos que viram o slide de
+                fechamento.</td></tr>
+            <tr><td><code>slideClass</code></td><td>—</td><td>Classes extras no recipiente de cada slide, como
+                <code>'prose'</code> (Tailwind) ou <code>'container'</code> (Bootstrap).</td></tr>
+            <tr><td><code>labels</code></td><td>textos em português</td><td><code>{ hint, close, dialog }</code>: dica
+                do rodapé, rótulo do × e nome do diálogo para leitores de tela.</td></tr>
+            <tr><td><code>hash</code></td><td><code>false</code></td><td>Guarda o slide atual na URL
+                (<code>#slide-3</code>).</td></tr>
+            <tr><td><code>onChange</code></td><td>—</td><td><code>(indice, total) =&gt; {}</code>: chamada sempre que
+                o slide muda.</td></tr>
+          </tbody>
+        </table>
+        <p><code>source</code>, <code>title</code> e <code>category</code> aceitam funções, avaliadas a cada abertura.
+          Isso é útil quando o conteúdo exibido muda, como em páginas com abas.</p>
+        <p><code>open()</code> retorna <code>false</code> se não houver o que apresentar. Chamado com a apresentação já
+          aberta, troca os slides sem sair da tela cheia.</p>
+      </section>
+
+      <section id="doc-navegacao">
+        <h2>Navegação</h2>
+        <table>
+          <thead>
+            <tr><th>Ação</th><th>Teclas</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Avançar</td><td><kbd>→</kbd> <kbd>↓</kbd> <kbd>Espaço</kbd> <kbd>Page Down</kbd></td></tr>
+            <tr><td>Voltar</td><td><kbd>←</kbd> <kbd>↑</kbd> <kbd>Backspace</kbd> <kbd>Page Up</kbd></td></tr>
+            <tr><td>Primeiro / último slide</td><td><kbd>Home</kbd> / <kbd>End</kbd></td></tr>
+            <tr><td>Percorrer links e campos do slide</td><td><kbd>Tab</kbd> / <kbd>Shift+Tab</kbd> (circula entre o ×
+                e os elementos do slide)</td></tr>
+            <tr><td>Abrir as notas do apresentador</td><td><kbd>N</kbd></td></tr>
+            <tr><td>Sair</td><td><kbd>Esc</kbd> ou o botão <strong>×</strong> no canto superior direito</td></tr>
+          </tbody>
+        </table>
+        <ul>
+          <li><strong>Clique:</strong> na metade direita do slide avança, na metade esquerda volta. Cliques em links,
+            botões e campos não trocam de slide.</li>
+          <li><strong>Toque:</strong> deslize para os lados. Rolar na vertical não troca de slide.</li>
+          <li><strong>Atalhos do navegador:</strong> teclas combinadas com Alt, Ctrl ou Cmd não são capturadas.
+            Enquanto o foco está num campo de texto, as teclas de navegação digitam normalmente.</li>
+          <li><strong>Tamanho:</strong> cada slide é ampliado ou reduzido para caber na tela. Slides muito longos
+            ganham rolagem.</li>
+        </ul>
+      </section>
+
+      <section id="doc-recursos">
+        <h2>Recursos para apresentar</h2>
+        <h3>Revelação passo a passo</h3>
+        <p>Elementos com <code>data-step</code> começam invisíveis e aparecem um por vez a cada avanço. Depois do
+          último, o próximo avanço troca de slide. Voltar esconde o último passo revelado. Ao voltar para o slide
+          anterior, ele aparece com todos os passos revelados. O espaço dos passos é reservado desde o início, então o
+          slide não muda de tamanho.</p>
+        <pre><code>&lt;ul&gt;
+  &lt;li data-step&gt;primeiro&lt;/li&gt;
+  &lt;li data-step&gt;segundo&lt;/li&gt;
+&lt;/ul&gt;</code></pre>
+        <h3>Notas do apresentador</h3>
+        <p>Texto dentro de <code>.deck-notes</code> nunca aparece na página nem no slide. A tecla <kbd>N</kbd>, ou
+          <code>PagePresenter.openNotes()</code>, abre uma segunda janela com:</p>
+        <ul>
+          <li>as notas do slide atual;</li>
+          <li>a posição e o passo atual;</li>
+          <li>o título do próximo slide;</li>
+          <li>um cronômetro.</li>
+        </ul>
+        <p>As teclas de navegação também funcionam nessa janela.</p>
+        <p>Alguns navegadores saem da tela cheia ao abrir uma janela. O módulo ignora essa saída, e a apresentação
+          continua ocupando a janela. Para manter a tela cheia, abra as notas antes de apresentar, por um botão que
+          chame <code>PagePresenter.openNotes()</code>. Se o navegador bloquear pop-ups, <code>openNotes()</code>
+          retorna <code>false</code>.</p>
+        <p class="deck-notes">Nota deste slide: abra as notas pelo botão no topo da página antes de apresentar.</p>
+        <h3>Slide na URL</h3>
+        <p>Com <code>hash: true</code>, a URL acompanha o slide (<code>#slide-3</code>). Se a página for recarregada, a
+          próxima abertura começa no slide indicado. Ao fechar, o fragmento é removido. Em <code>file://</code>, ele
+          continua na URL, porque o Chrome não permite reescrevê-la ali.</p>
+        <h3>Aviso de troca de slide</h3>
+        <p><code>onChange(indice, total)</code> é chamada na abertura e a cada troca de slide. Não é chamada a cada
+          passo. Serve para estatísticas, legendas ou sincronizar outro elemento da página.</p>
+      </section>
+
+      <section id="doc-componentes">
+        <h2>Componentes de slide</h2>
+        <p>Estes componentes ficam em <code>page-presenter-deck.css</code>. Funcionam no roteiro próprio e dentro das
+          seções de um artigo. O botão "Apresentar roteiro próprio" mostra um slide de cada.</p>
+        <table>
+          <thead>
+            <tr><th>Classe</th><th>Uso</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>.deck-title</code>, <code>.deck-subtitle</code>, <code>.deck-text</code></td><td>Título,
+                subtítulo em destaque e texto</td></tr>
+            <tr><td><code>.deck-statement</code></td><td>Frase de destaque com barra lateral</td></tr>
+            <tr><td><code>.deck-flow</code> (<code>.deck-flow-muted</code>)</td><td>Etapas com setas entre elas</td></tr>
+            <tr><td><code>.deck-checklist</code></td><td>Lista com marcas de ✓</td></tr>
+            <tr><td><code>.deck-products</code> (<code>.deck-products-more</code>)</td><td>Etiquetas</td></tr>
+            <tr><td><code>.deck-network</code>, <code>.deck-network-node</code>, <code>.deck-network-arrow</code></td>
+              <td>Dois blocos ligados por seta (variantes <code>-threat</code> e <code>-response</code>), para fundo
+                escuro</td></tr>
+            <tr><td><code>.deck-stats</code></td><td>Números em destaque:
+                <code>&lt;li&gt;&lt;strong&gt;98%&lt;/strong&gt; legenda&lt;/li&gt;</code></td></tr>
+            <tr><td><code>.deck-columns</code> (<code>.deck-columns-compare</code>)</td><td>Colunas lado a lado; a
+                variante destaca a última, para "antes × depois"</td></tr>
+            <tr><td><code>.deck-cards</code></td><td>Cartões com ícone (<code>&lt;svg&gt;</code>),
+                <code>&lt;h3&gt;</code> e <code>&lt;p&gt;</code></td></tr>
+            <tr><td><code>.deck-figure</code></td><td><code>&lt;figure&gt;</code> com imagem, SVG ou vídeo ajustado à
+                tela e <code>&lt;figcaption&gt;</code></td></tr>
+            <tr><td><code>.deck-timeline</code> (<code>li.deck-timeline-done</code>)</td><td>Linha do tempo vertical
+                com <code>&lt;time&gt;</code> em cada marco</td></tr>
+            <tr><td><code>.deck-bars</code></td><td>Barras de percentual:
+                <code>&lt;li style="--value: 72"&gt;Rótulo&lt;/li&gt;</code> (inteiro de 0 a 100)</td></tr>
+            <tr><td><code>.deck-quote</code></td><td><code>&lt;blockquote&gt;</code> com <code>&lt;p&gt;</code> e
+                <code>&lt;cite&gt;</code> para o autor</td></tr>
+            <tr><td><code>.deck-table</code> (<code>.deck-num</code>)</td><td>Tabela com cabeçalho destacado;
+                <code>.deck-num</code> alinha números à direita</td></tr>
+            <tr><td><code>.deck-code</code></td><td><code>&lt;pre class="deck-code"&gt;&lt;code&gt;…&lt;/code&gt;&lt;/pre&gt;</code></td></tr>
+          </tbody>
+        </table>
+        <p><code>.deck-title</code>, <code>.deck-text</code>, <code>.deck-statement</code>, <code>.deck-stats</code> e
+          <code>.deck-quote</code> têm visual próprio sobre a capa. Em telas estreitas, as grades viram uma coluna.</p>
+      </section>
+
+      <section id="doc-personalizacao">
+        <h2>Personalização</h2>
+        <h3>Variáveis CSS</h3>
+        <p>As cores e medidas são variáveis com prefixo <code>--pp-</code>, definidas em <code>:root</code> no
+          <code>page-presenter.css</code>. Para mudar, redefina-as no seu CSS, carregado depois do módulo:</p>
+        <pre><code>:root {
+  --pp-primary: #6b21a8;
+  --pp-primary-deep: #3b0764;
+  --pp-accent: #a855f7;
+  --pp-highlight: #facc15;
+}</code></pre>
+        <table>
+          <thead>
+            <tr><th>Grupo</th><th>Variáveis</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Fundo e superfícies</td><td><code>--pp-bg</code>, <code>--pp-surface</code>,
+                <code>--pp-subtle</code>, <code>--pp-border</code>, <code>--pp-border-light</code></td></tr>
+            <tr><td>Texto</td><td><code>--pp-text</code>, <code>--pp-text-secondary</code>,
+                <code>--pp-text-muted</code>, <code>--pp-text-inverse</code></td></tr>
+            <tr><td>Cores da marca</td><td><code>--pp-primary</code>, <code>--pp-primary-deep</code>,
+                <code>--pp-accent</code>, <code>--pp-accent-soft</code>, <code>--pp-highlight</code>,
+                <code>--pp-success</code></td></tr>
+            <tr><td>Forma</td><td><code>--pp-radius-md</code>, <code>--pp-radius-lg</code>,
+                <code>--pp-radius-full</code>, <code>--pp-shadow-md</code>, <code>--pp-shadow-lg</code>,
+                <code>--pp-transition</code></td></tr>
+            <tr><td>Caixa do slide</td><td><code>--pp-slide-bg</code>, <code>--pp-slide-shadow</code>,
+                <code>--pp-slide-radius</code>, <code>--pp-slide-padding</code>, <code>--pp-slide-padding-sm</code>
+                (telas estreitas), <code>--pp-slide-max-width</code></td></tr>
+          </tbody>
+        </table>
+        <p>As variáveis da caixa do slide também podem ser redefinidas num slide só, porque valem a partir do elemento
+          onde são declaradas.</p>
+        <h3>Classes no slide</h3>
+        <table>
+          <thead>
+            <tr><th>Classe</th><th>Onde</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>.presentation-slide</code></td><td>Cada slide (ocupa a tela)</td></tr>
+            <tr><td><code>.presentation-slide-inner</code></td><td>Recipiente do conteúdo (a caixa)</td></tr>
+            <tr><td><code>.presentation-cover</code></td><td>Capa, gerada ou <code>data-variant="cover"</code></td></tr>
+            <tr><td><code>.presentation-closing</code></td><td>Slide de fechamento</td></tr>
+            <tr><td><code>.presentation-from-deck</code></td><td>Slides do roteiro próprio</td></tr>
+            <tr><td><code>.presentation-category</code>, <code>.presentation-cover-title</code>,
+                <code>.presentation-cover-body</code></td><td>Partes da capa gerada</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="doc-frameworks">
+        <h2>Uso com Tailwind ou Bootstrap</h2>
+        <p>O módulo se divide em duas partes:</p>
+        <ul>
+          <li><strong>a moldura</strong>, que é função (<code>page-presenter.css</code>, obrigatória);</li>
+          <li><strong>o visual dos slides</strong> (<code>page-presenter-deck.css</code>, opcional).</li>
+        </ul>
+        <p>Com um framework, o caminho mais simples é carregar só a moldura, montar o conteúdo dos slides com as
+          classes do framework e, se quiser, zerar a caixa branca:</p>
+        <pre><code>:root {
+  --pp-slide-bg: transparent;
+  --pp-slide-shadow: none;
+  --pp-slide-padding: 0;
+  --pp-slide-padding-sm: 0;
+}</code></pre>
+        <p>A moldura foi feita para conviver com os resets dos frameworks (Preflight do Tailwind, Reboot do
+          Bootstrap):</p>
+        <ul>
+          <li>os slides são <code>&lt;div&gt;</code>, então regras da página para <code>section</code> não vazam para
+            eles;</li>
+          <li>o botão × define todas as propriedades que usa;</li>
+          <li>a moldura define o próprio <code>box-sizing</code>;</li>
+          <li>todas as classes e variáveis têm prefixo (<code>presentation-</code>, <code>deck-</code>,
+            <code>--pp-</code>);</li>
+          <li>o overlay usa <code>z-index: 2000</code>, acima de modais e tooltips do Bootstrap.</li>
+        </ul>
+        <h3>Tailwind</h3>
+        <ul>
+          <li><strong>Conteúdo dos slides:</strong> as classes do Tailwind usadas no artigo ou nos
+            <code>.deck-slide</code> já funcionam no slide. O Tailwind também encontra essas classes, porque estão no
+            HTML da página.</li>
+          <li><strong>Tipografia:</strong> com o plugin Typography, <code>slideClass: 'prose lg:prose-xl'</code> dá
+            estilo ao texto clonado.</li>
+          <li><strong>Classes só no JavaScript:</strong> classes que aparecem só no <code>slideClass</code> precisam
+            estar em arquivos que o Tailwind lê. O Tailwind 4 lê o projeto inteiro, e o Tailwind do CDN gera o CSS delas
+            logo depois que o slide abre.</li>
+          <li><strong>Cores do tema:</strong> o Tailwind 4 expõe o tema como variáveis CSS, que podem alimentar as do
+            módulo: <code>:root { --pp-primary: var(--color-indigo-700); }</code>.</li>
+          <li><strong>Precedência no Tailwind 4:</strong> o Tailwind 4 usa camadas CSS (<code>@layer</code>), e CSS
+            fora de camada vence CSS em camada. Para que os utilitários vençam o módulo, importe o módulo numa
+            camada:</li>
+        </ul>
+        <pre><code>@import "tailwindcss";
+@import "./page-presenter.css" layer(components);
+@import "./page-presenter-deck.css" layer(components);</code></pre>
+        <ul>
+          <li><strong>Tailwind 3:</strong> não usa camadas nativas, então quem vence é a ordem dos arquivos. Carregue
+            os CSS do módulo antes do CSS gerado pelo Tailwind.</li>
+        </ul>
+        <h3>Bootstrap</h3>
+        <ul>
+          <li>Carregue os CSS do módulo antes do Bootstrap. Os utilitários do Bootstrap usam <code>!important</code> e
+            vencem de qualquer forma.</li>
+          <li>Os componentes do Bootstrap (<code>card</code>, <code>table</code>, <code>blockquote</code>,
+            <code>figure</code>, <code>row</code>/<code>col</code>) funcionam dentro dos slides e substituem os
+            <code>.deck-*</code>.</li>
+          <li><code>slideClass: 'container'</code> aplica a largura e o espaçamento do Bootstrap ao conteúdo.</li>
+          <li>As cores podem vir das variáveis do Bootstrap: <code>:root { --pp-primary: var(--bs-primary); }</code>.</li>
+        </ul>
+      </section>
+
+      <section id="doc-api">
+        <h2>API</h2>
+        <table>
+          <thead>
+            <tr><th>Método</th><th>Descrição</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>PagePresenter.open(opcoes)</code></td><td>Monta os slides e abre em tela cheia. Retorna
+                <code>false</code> se não houver o que apresentar.</td></tr>
+            <tr><td><code>PagePresenter.close()</code></td><td>Encerra a apresentação.</td></tr>
+            <tr><td><code>PagePresenter.next()</code> / <code>prev()</code></td><td>Avança ou volta um passo
+                (<code>data-step</code>) ou um slide.</td></tr>
+            <tr><td><code>PagePresenter.goTo(indice)</code></td><td>Vai direto a um slide, sem passos
+                revelados.</td></tr>
+            <tr><td><code>PagePresenter.openNotes()</code></td><td>Abre a janela de notas do apresentador. Retorna
+                <code>false</code> se o pop-up for bloqueado.</td></tr>
+            <tr><td><code>PagePresenter.isOpen()</code>, <code>slideCount()</code>, <code>currentIndex()</code></td>
+              <td>Estado atual.</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="doc-compatibilidade">
+        <h2>Compatibilidade e limitações</h2>
+        <ul>
+          <li>O ajuste automático ao tamanho da tela usa a propriedade CSS <code>zoom</code>, presente no Chrome, no
+            Edge, no Safari e no Firefox 126 ou mais recente.</li>
+          <li>O visual de capa clareia o × e o rodapé com <code>:has()</code>, presente nos mesmos navegadores. Sem
+            ele, o × fica escuro sobre a capa.</li>
+          <li>Se o navegador recusar a tela cheia nativa, a apresentação continua ocupando a janela inteira.</li>
+          <li>Os slides clonados usam o CSS da página para o próprio conteúdo.</li>
+          <li>Com <code>prefers-reduced-motion</code>, as animações são desligadas. Na impressão, a apresentação fica
+            oculta.</li>
+        </ul>
+      </section>
+
+      <section id="doc-testes">
+        <h2>Testes</h2>
+        <p>Abra <a href="tests.html"><code>tests.html</code></a> no navegador e confira se todas as linhas aparecem em
+          verde. A página carrega só o <code>page-presenter.css</code>, o que também confirma que a moldura funciona
+          sem o tema.</p>
+        <p><a href="test-tailwind.html"><code>test-tailwind.html</code></a> e
+          <a href="test-bootstrap.html"><code>test-bootstrap.html</code></a> carregam o framework por CDN e conferem a
+          convivência:</p>
+        <ul>
+          <li>os slides não herdam regras de <code>section</code> da página;</li>
+          <li>o × e a caixa do slide resistem ao reset do framework;</li>
+          <li>os componentes <code>.deck-*</code> vencem o reset;</li>
+          <li>os utilitários do framework vencem o tema;</li>
+          <li><code>slideClass</code> funciona.</li>
+        </ul>
+        <p>Os botões dessas páginas permitem conferir o visual à mão.</p>
+        <p>As páginas também rodam sem interface, no Chrome ou no Edge:</p>
+        <pre><code>chrome --headless=new --virtual-time-budget=8000 --dump-dom file:///caminho/tests.html | grep -o 'class="fail"' | wc -l</code></pre>
+        <p>O resultado <code>0</code> significa que nenhuma verificação falhou.</p>
+      </section>
+    </article>
+
+    <h2 class="demos-title">Demonstrações</h2>
+    <p>Os dois artigos abaixo são as fontes dos botões "Apresentar artigo de exemplo" e "Apresentar roteiro
+      próprio".</p>
+
+    <!-- Exemplo 1: slides gerados a partir do conteúdo, com hash e onChange -->
     <article id="article">
-      <p class="lead">O conteúdo antes da primeira seção vai para a capa, junto com o título.</p>
-      <p>Este parágrafo também entra na capa.</p>
+      <p class="lead">O conteúdo antes da primeira seção vai para a capa, junto com o título e a categoria.</p>
+      <p>Este parágrafo também entra na capa. Logo abaixo há um parágrafo com <code>hidden</code>, que continua
+        oculto no slide.</p>
+      <p hidden>Nota interna: este texto não aparece nem na página nem na apresentação.</p>
 
       <div class="section">
-        <h2>Primeira seção</h2>
-        <p>Cada elemento que corresponde a <code>sectionSelector</code> vira um slide.</p>
+        <h2>Navegação</h2>
+        <ul>
+          <li><kbd>→</kbd> <kbd>↓</kbd> <kbd>Espaço</kbd> <kbd>Page Down</kbd> avançam.</li>
+          <li><kbd>←</kbd> <kbd>↑</kbd> <kbd>Backspace</kbd> <kbd>Page Up</kbd> voltam.</li>
+          <li><kbd>Home</kbd> e <kbd>End</kbd> levam ao primeiro e ao último slide.</li>
+          <li>Clique na metade direita do slide para avançar e na esquerda para voltar.</li>
+          <li>Em telas de toque, deslize para os lados. Rolar na vertical não troca de slide.</li>
+          <li><kbd>Esc</kbd> ou o botão × encerram a apresentação.</li>
+          <li><kbd>N</kbd> abre a janela de notas do apresentador.</li>
+        </ul>
+        <p class="deck-notes">Nota deste slide: as notas ficam em <code>.deck-notes</code>, ocultas na página e no
+          slide. Na janela de notas também aparecem o cronômetro e o título do próximo slide.</p>
       </div>
 
       <div class="section">
-        <h2>Segunda seção</h2>
-        <ul>
-          <li>Navegue com as setas, Espaço e Backspace.</li>
-          <li>Home e End levam ao primeiro e ao último slide.</li>
-          <li>Esc ou o botão × encerram a apresentação.</li>
-        </ul>
+        <h2>Interação dentro do slide</h2>
+        <p>Use <kbd>Tab</kbd> e <kbd>Shift+Tab</kbd> para percorrer o × e os elementos do slide, como
+          <a href="https://developer.mozilla.org/pt-BR/docs/Web/API/Fullscreen_API" target="_blank" rel="noopener">este
+            link</a>. Clicar no link não troca de slide.</p>
+        <p><label>Digite aqui, o Espaço e o Backspace não trocam de slide:
+            <input type="text" placeholder="texto livre"></label></p>
+        <p>Atalhos com <kbd>Alt</kbd>, <kbd>Ctrl</kbd> ou <kbd>Cmd</kbd> continuam com o navegador.</p>
+        <button type="button">Este botão some no slide</button>
       </div>
 
       <p>Conteúdo solto depois de uma seção acompanha o slide da seção anterior.</p>
 
+      <div class="section">
+        <h2>Ajuste à tela e URL</h2>
+        <p>Cada slide é ampliado ou reduzido para caber na tela. Slides muito longos ganham rolagem.</p>
+        <p>Esta apresentação usa <code>hash: true</code>: a URL mostra <code>#slide-N</code>. Recarregue a página e
+          abra de novo para continuar do mesmo slide.</p>
+        <p>O texto abaixo dos botões, na página, é atualizado pela função <code>onChange</code>.</p>
+      </div>
+
       <div class="closing">
         <strong>Fechamento:</strong> elementos que correspondem a <code>closingSelector</code> usam o visual de
-        fechamento.
+        fechamento. <a href="#article-deck" data-switch-deck>Trocar para o roteiro próprio</a> sem sair da tela
+        cheia.
       </div>
     </article>
 
-    <!-- Exemplo 2: roteiro próprio, oculto na página -->
+    <!-- Exemplo 2: roteiro próprio, oculto na página, com textos da interface trocados por labels -->
     <article id="article-deck">
       <p>Este artigo tem um roteiro próprio (<code>.presentation-deck</code>), invisível na página e usado no lugar
-        do conteúdo ao apresentar.</p>
+        do conteúdo ao apresentar. Ele também mostra a opção <code>labels</code>, que troca a dica do rodapé e o
+        rótulo do ×.</p>
 
       <div class="presentation-deck" hidden>
         <div class="deck-slide" data-variant="cover">
@@ -144,24 +659,246 @@
             <li class="deck-products-more">e nada mais</li>
           </ul>
         </div>
+
+        <div class="deck-slide">
+          <h2 class="deck-title">Revelação passo a passo</h2>
+          <p class="deck-subtitle">[data-step]</p>
+          <ul class="deck-checklist">
+            <li data-step>aparece no primeiro avanço;</li>
+            <li data-step>depois este;</li>
+            <li data-step>por último este.</li>
+          </ul>
+          <p class="deck-text" data-step>Ao voltar para este slide, todos os passos já aparecem.</p>
+          <p class="deck-notes">Avance devagar: cada → revela um item. A janela de notas mostra o passo atual.</p>
+        </div>
+
+        <div class="deck-slide" data-variant="cover">
+          <h2 class="deck-title">Números em destaque</h2>
+          <p class="deck-text">.deck-stats, aqui sobre a capa escura</p>
+          <ul class="deck-stats">
+            <li><strong>0</strong> dependências</li>
+            <li><strong>3</strong> arquivos</li>
+            <li><strong>100%</strong> navegador</li>
+          </ul>
+        </div>
+
+        <div class="deck-slide">
+          <h2 class="deck-title">Antes × depois</h2>
+          <p class="deck-subtitle">.deck-columns .deck-columns-compare</p>
+          <div class="deck-columns deck-columns-compare">
+            <div>
+              <h3>Antes</h3>
+              <p>Slides copiados à mão para outro programa, sempre desatualizados.</p>
+            </div>
+            <div>
+              <h3>Depois</h3>
+              <p>A própria página vira a apresentação, com um clique.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="deck-slide">
+          <h2 class="deck-title">Cartões</h2>
+          <p class="deck-subtitle">.deck-cards</p>
+          <ul class="deck-cards">
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                aria-hidden="true">
+                <rect x="3" y="4" width="18" height="12" rx="2"></rect>
+                <line x1="8" y1="20" x2="16" y2="20"></line>
+              </svg>
+              <h3>Tela cheia</h3>
+              <p>Usa a tela cheia nativa, com fallback para a janela.</p>
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                aria-hidden="true">
+                <rect x="2" y="6" width="20" height="12" rx="2"></rect>
+                <line x1="6" y1="10" x2="6" y2="10"></line>
+                <line x1="10" y1="10" x2="10" y2="10"></line>
+                <line x1="8" y1="14" x2="16" y2="14"></line>
+              </svg>
+              <h3>Teclado</h3>
+              <p>Setas, Espaço, Home, End e Tab.</p>
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                aria-hidden="true">
+                <rect x="7" y="2" width="10" height="20" rx="2"></rect>
+                <line x1="11" y1="18" x2="13" y2="18"></line>
+              </svg>
+              <h3>Toque</h3>
+              <p>Deslize para os lados no celular.</p>
+            </li>
+          </ul>
+        </div>
+
+        <div class="deck-slide">
+          <h2 class="deck-title">Imagem com legenda</h2>
+          <figure class="deck-figure">
+            <svg viewBox="0 0 400 160" role="img" aria-label="Página transformada em slides">
+              <rect x="10" y="20" width="120" height="120" rx="8" fill="#e8f4fc" stroke="#008bd2" stroke-width="2"></rect>
+              <text x="70" y="85" text-anchor="middle" font-size="16" fill="#004b82">Página</text>
+              <line x1="145" y1="80" x2="245" y2="80" stroke="#008bd2" stroke-width="3"></line>
+              <polygon points="245,72 260,80 245,88" fill="#008bd2"></polygon>
+              <rect x="270" y="35" width="120" height="90" rx="8" fill="#004b82"></rect>
+              <text x="330" y="85" text-anchor="middle" font-size="16" fill="#ffffff">Slides</text>
+            </svg>
+            <figcaption>.deck-figure: imagem, SVG ou vídeo ajustado à tela, com legenda.</figcaption>
+          </figure>
+        </div>
+
+        <div class="deck-slide">
+          <h2 class="deck-title">Linha do tempo</h2>
+          <p class="deck-subtitle">.deck-timeline</p>
+          <ol class="deck-timeline">
+            <li class="deck-timeline-done"><time>Março</time>Extração do módulo</li>
+            <li class="deck-timeline-done"><time>Abril</time>Testes no navegador</li>
+            <li><time>Maio</time>Uso em novos projetos</li>
+          </ol>
+        </div>
+
+        <div class="deck-slide">
+          <h2 class="deck-title">Barras de percentual</h2>
+          <p class="deck-subtitle">.deck-bars</p>
+          <ul class="deck-bars">
+            <li style="--value: 92">Chrome e Edge</li>
+            <li style="--value: 64">Safari</li>
+            <li style="--value: 35">Firefox</li>
+          </ul>
+          <p class="deck-text">Valores fictícios, só para demonstrar.</p>
+        </div>
+
+        <div class="deck-slide">
+          <h2 class="deck-title">Citação</h2>
+          <blockquote class="deck-quote">
+            <p>A melhor apresentação é a página que você já escreveu.</p>
+            <cite>Equipe do projeto</cite>
+          </blockquote>
+        </div>
+
+        <div class="deck-slide">
+          <h2 class="deck-title">Tabela</h2>
+          <table class="deck-table">
+            <thead>
+              <tr>
+                <th>Arquivo</th>
+                <th>Papel</th>
+                <th class="deck-num">Linhas</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>page-presenter.js</td>
+                <td>Módulo</td>
+                <td class="deck-num">~470</td>
+              </tr>
+              <tr>
+                <td>page-presenter.css</td>
+                <td>Moldura</td>
+                <td class="deck-num">~250</td>
+              </tr>
+              <tr>
+                <td>page-presenter-deck.css</td>
+                <td>Tema (opcional)</td>
+                <td class="deck-num">~630</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="deck-slide">
+          <h2 class="deck-title">Código</h2>
+          <pre class="deck-code"><code>PagePresenter.open({
+  source: '#artigo',
+  sectionSelector: '.secao',
+  hash: true
+});</code></pre>
+        </div>
+
+        <div class="deck-slide" data-variant="cover">
+          <h2 class="deck-title">Bloco → bloco</h2>
+          <p class="deck-text">.deck-network com as variantes -threat e -response</p>
+          <div class="deck-network">
+            <span class="deck-network-node deck-network-threat">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                aria-hidden="true">
+                <path d="M12 3 2 21h20L12 3z"></path>
+                <line x1="12" y1="10" x2="12" y2="14"></line>
+                <line x1="12" y1="17.5" x2="12" y2="17.5"></line>
+              </svg>
+              Problema
+            </span>
+            <span class="deck-network-arrow" aria-hidden="true">→</span>
+            <span class="deck-network-node deck-network-response">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                aria-hidden="true">
+                <polyline points="4 12 10 18 20 6"></polyline>
+              </svg>
+              Solução
+            </span>
+          </div>
+          <p class="deck-statement">Fim do roteiro. Esc encerra.</p>
+        </div>
       </div>
     </article>
   </main>
 
   <script src="page-presenter.js"></script>
   <script>
-    document.getElementById('btn-present-article').addEventListener('click', () => {
+    const status = document.getElementById('status');
+    const report = (name) => (index, total) => {
+      status.textContent = `${name}: slide ${index + 1} de ${total} (PagePresenter.currentIndex() = ${PagePresenter.currentIndex()})`;
+    };
+
+    // A própria documentação: cada <section> vira um slide (sectionSelector padrão)
+    function presentDocs() {
+      PagePresenter.open({
+        source: '#docs',
+        title: 'Page Presenter',
+        category: 'Documentação',
+        slideClass: 'docs', // os estilos #docs desta página também valem nos slides
+        onChange: report('Documentação')
+      });
+    }
+
+    function presentArticle() {
       PagePresenter.open({
         source: '#article',
-        title: 'Demonstração do Page Presenter',
+        title: () => `Demonstração do Page Presenter · ${new Date().toLocaleDateString('pt-BR')}`, // função: avaliada a cada abertura
         category: 'Exemplo',
         sectionSelector: '.section',
-        closingSelector: '.closing'
+        closingSelector: '.closing',
+        hash: true,
+        onChange: report('Artigo')
       });
+    }
+
+    function presentDeck() {
+      PagePresenter.open({
+        source: '#article-deck',
+        labels: {
+          hint: 'Setas, Espaço ou clique nas laterais · Esc encerra',
+          close: 'Encerrar o roteiro',
+          dialog: 'Roteiro próprio'
+        },
+        onChange: report('Roteiro')
+      });
+    }
+
+    document.getElementById('btn-present-docs').addEventListener('click', presentDocs);
+    document.getElementById('btn-present-article').addEventListener('click', presentArticle);
+    document.getElementById('btn-present-deck').addEventListener('click', presentDeck);
+    // Abrir as notas antes de apresentar evita a saída da tela cheia que alguns navegadores fazem ao abrir janelas
+    document.getElementById('btn-notes').addEventListener('click', () => {
+      if (!PagePresenter.openNotes()) alert('O navegador bloqueou a janela de notas. Permita pop-ups nesta página.');
     });
 
-    document.getElementById('btn-present-deck').addEventListener('click', () => {
-      PagePresenter.open({ source: '#article-deck' });
+    // Link no slide de fechamento: open() com a apresentação aberta troca os slides sem sair da tela cheia
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('[data-switch-deck]')) return;
+      e.preventDefault();
+      presentDeck();
     });
   </script>
 </body>

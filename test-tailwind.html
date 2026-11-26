@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Page Presenter — Teste com Tailwind</title>
+  <!-- Ordem das camadas declarada antes de tudo: o módulo fica em "components",
+       acima do reset (base) e abaixo dos utilitários. É o @import … layer(components) do README. -->
+  <style>
+    @layer theme, base, components, utilities;
+    @import url("page-presenter.css") layer(components);
+    @import url("page-presenter-deck.css") layer(components);
+  </style>
+  <!-- Precisa de internet. Versão fixa para o teste não mudar sozinho. -->
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.1.11"></script>
+  <style>
+    /* Regra "hostil" típica de landing page: não pode vazar para os slides */
+    section {
+      border-top: 8px solid red;
+    }
+
+    .pass { color: #0d8a43; }
+    .fail { color: #dc2626; font-weight: 700; }
+  </style>
+</head>
+
+<body class="bg-slate-100 text-slate-800">
+  <main class="max-w-3xl mx-auto p-6 space-y-6">
+    <h1 class="text-3xl font-bold">Page Presenter com Tailwind 4 (CDN)</h1>
+    <p>Esta página carrega o Tailwind pelo CDN (precisa de internet) e o módulo numa camada CSS. As verificações
+      abaixo rodam sozinhas depois que o Tailwind gera o CSS. Os botões servem para conferir o visual à mão.</p>
+
+    <div class="flex flex-wrap gap-2">
+      <button type="button" id="btn-utilities" class="px-4 py-2 rounded bg-indigo-600 text-white font-semibold">
+        Slides só com utilitários (sem tema)</button>
+      <button type="button" id="btn-deck" class="px-4 py-2 rounded bg-indigo-600 text-white font-semibold">
+        Roteiro com .deck-* e utilitários</button>
+    </div>
+
+    <ul id="results" class="space-y-1"></ul>
+
+    <!-- Artigo montado só com utilitários do Tailwind -->
+    <article id="tw-article" class="bg-white rounded-xl p-6 space-y-6">
+      <p class="text-lg">Introdução do artigo: vai para a capa.</p>
+
+      <section class="space-y-4">
+        <h2 class="text-4xl font-extrabold text-indigo-700">Grade de cartões</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div class="rounded-lg border border-slate-200 p-4 shadow-sm">
+            <h3 class="font-bold">Um</h3>
+            <p class="text-slate-600">Cartão feito com utilitários.</p>
+          </div>
+          <div class="rounded-lg border border-slate-200 p-4 shadow-sm">
+            <h3 class="font-bold">Dois</h3>
+            <p class="text-slate-600">Sem nenhuma classe .deck-*.</p>
+          </div>
+          <div class="rounded-lg border border-slate-200 p-4 shadow-sm">
+            <h3 class="font-bold">Três</h3>
+            <p class="text-slate-600">O reset do Tailwind vale aqui.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-3">
+        <h2 class="text-4xl font-extrabold text-indigo-700">Lista com passos</h2>
+        <ul class="list-disc pl-6 text-xl space-y-2">
+          <li data-step>primeiro passo</li>
+          <li data-step>segundo passo</li>
+        </ul>
+      </section>
+
+      <section class="space-y-4">
+        <h2 class="text-4xl font-extrabold text-indigo-700">Tipografia</h2>
+        <p class="text-5xl font-black tracking-tight bg-gradient-to-r from-indigo-600 to-pink-500 bg-clip-text text-transparent">
+          Texto com gradiente</p>
+        <p class="text-xl text-slate-600 leading-relaxed">Parágrafo <strong class="font-semibold text-slate-900">em
+            destaque</strong>, com <span class="bg-yellow-200 px-1 rounded">marca-texto</span>,
+          <em class="italic">itálico</em>, <span class="underline decoration-pink-500 decoration-4 underline-offset-4">sublinhado
+            colorido</span> e <code class="font-mono text-sm bg-slate-100 px-1.5 py-0.5 rounded">código</code>.</p>
+        <p class="uppercase tracking-widest text-sm font-bold text-slate-500">Sobrelinha em caixa alta</p>
+      </section>
+
+      <section class="space-y-5">
+        <h2 class="text-4xl font-extrabold text-indigo-700">Etiquetas e botões</h2>
+        <div class="flex flex-wrap gap-2">
+          <span class="rounded-full bg-emerald-100 px-3 py-1 text-sm font-semibold text-emerald-800">concluído</span>
+          <span class="rounded-full bg-amber-100 px-3 py-1 text-sm font-semibold text-amber-800">em andamento</span>
+          <span class="rounded-full bg-rose-100 px-3 py-1 text-sm font-semibold text-rose-800">bloqueado</span>
+          <span class="rounded-full ring-1 ring-slate-300 px-3 py-1 text-sm font-semibold text-slate-600">rascunho</span>
+        </div>
+        <!-- <button> é removido dos clones; links com cara de botão continuam -->
+        <div class="flex flex-wrap gap-3">
+          <a href="#tw-article" class="rounded-lg bg-indigo-600 px-5 py-2.5 font-semibold text-white shadow hover:bg-indigo-500">Sólido</a>
+          <a href="#tw-article" class="rounded-lg border-2 border-indigo-600 px-5 py-2 font-semibold text-indigo-700 hover:bg-indigo-50">Contorno</a>
+          <a href="#tw-article" class="rounded-lg px-5 py-2.5 font-semibold text-indigo-700 hover:bg-indigo-50">Discreto</a>
+          <a href="#tw-article" class="rounded-full bg-gradient-to-r from-indigo-600 to-pink-500 px-6 py-2.5 font-semibold text-white shadow-lg">Gradiente</a>
+        </div>
+        <p class="text-sm text-slate-500">Botões <code>&lt;button&gt;</code> somem no slide; use links. Passe o mouse para
+          ver os estados <code>hover:</code>.</p>
+      </section>
+
+      <section class="space-y-5">
+        <h2 class="text-4xl font-extrabold text-indigo-700">Indicadores e progresso</h2>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          <div class="rounded-xl bg-indigo-50 p-4 text-center">
+            <div class="text-4xl font-black text-indigo-700 tabular-nums">98%</div>
+            <div class="text-sm text-slate-600">resolvidos</div>
+          </div>
+          <div class="rounded-xl bg-emerald-50 p-4 text-center">
+            <div class="text-4xl font-black text-emerald-700 tabular-nums">3 min</div>
+            <div class="text-sm text-slate-600">tempo médio</div>
+          </div>
+          <div class="rounded-xl bg-amber-50 p-4 text-center">
+            <div class="text-4xl font-black text-amber-700 tabular-nums">12</div>
+            <div class="text-sm text-slate-600">abertos</div>
+          </div>
+          <div class="rounded-xl bg-rose-50 p-4 text-center">
+            <div class="text-4xl font-black text-rose-700 tabular-nums">2</div>
+            <div class="text-sm text-slate-600">críticos</div>
+          </div>
+        </div>
+        <div class="space-y-3">
+          <div data-step>
+            <div class="flex justify-between text-sm font-semibold"><span>Adesão</span><span>72%</span></div>
+            <div class="h-3 rounded-full bg-slate-200"><div class="h-3 w-[72%] rounded-full bg-indigo-600"></div></div>
+          </div>
+          <div data-step>
+            <div class="flex justify-between text-sm font-semibold"><span>Cobertura</span><span>45%</span></div>
+            <div class="h-3 rounded-full bg-slate-200"><div class="h-3 w-[45%] rounded-full bg-emerald-500"></div></div>
+          </div>
+        </div>
+        <p class="deck-notes">As barras aparecem uma por vez (data-step), feitas só com utilitários.</p>
+      </section>
+
+      <section class="space-y-4">
+        <h2 class="text-4xl font-extrabold text-indigo-700">Tabela</h2>
+        <div class="overflow-hidden rounded-xl ring-1 ring-slate-200">
+          <table class="w-full text-left text-lg">
+            <thead class="bg-slate-800 text-white">
+              <tr><th class="px-4 py-3">Equipe</th><th class="px-4 py-3">Status</th><th class="px-4 py-3 text-right">Casos</th></tr>
+            </thead>
+            <tbody class="divide-y divide-slate-200">
+              <tr class="odd:bg-white even:bg-slate-50"><td class="px-4 py-3">Alfa</td><td class="px-4 py-3"><span
+                    class="rounded-full bg-emerald-100 px-2 text-sm text-emerald-800">ok</span></td><td
+                  class="px-4 py-3 text-right tabular-nums">1.204</td></tr>
+              <tr class="odd:bg-white even:bg-slate-50"><td class="px-4 py-3">Beta</td><td class="px-4 py-3"><span
+                    class="rounded-full bg-amber-100 px-2 text-sm text-amber-800">atenção</span></td><td
+                  class="px-4 py-3 text-right tabular-nums">87</td></tr>
+              <tr class="odd:bg-white even:bg-slate-50"><td class="px-4 py-3">Gama</td><td class="px-4 py-3"><span
+                    class="rounded-full bg-rose-100 px-2 text-sm text-rose-800">crítico</span></td><td
+                  class="px-4 py-3 text-right tabular-nums">9</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="space-y-4">
+        <h2 class="text-4xl font-extrabold text-indigo-700">Formulário</h2>
+        <p class="text-slate-600">Campos funcionam no slide: o Espaço e o Backspace digitam em vez de navegar.</p>
+        <div class="grid sm:grid-cols-2 gap-4">
+          <label class="block">
+            <span class="text-sm font-semibold text-slate-700">Nome</span>
+            <input type="text" placeholder="Digite aqui"
+              class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+          </label>
+          <label class="block">
+            <span class="text-sm font-semibold text-slate-700">Prioridade</span>
+            <select class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 focus:ring-2 focus:ring-indigo-500">
+              <option>Baixa</option>
+              <option>Média</option>
+              <option>Alta</option>
+            </select>
+          </label>
+          <label class="flex items-center gap-2">
+            <input type="checkbox" checked class="size-5 accent-indigo-600">
+            <span>Notificar a equipe</span>
+          </label>
+          <label class="block">
+            <span class="text-sm font-semibold text-slate-700">Intensidade</span>
+            <input type="range" class="w-full accent-pink-500">
+          </label>
+        </div>
+      </section>
+
+      <section>
+        <div class="rounded-2xl bg-gradient-to-br from-slate-900 to-indigo-900 p-8 text-white shadow-2xl space-y-4">
+          <h2 class="text-4xl font-extrabold">Painel escuro</h2>
+          <p class="text-indigo-200 text-lg">Fundo com gradiente, animações e transparência.</p>
+          <div class="flex flex-wrap items-center gap-6">
+            <span class="flex items-center gap-2"><span class="relative flex size-3"><span
+                  class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span><span
+                  class="relative inline-flex size-3 rounded-full bg-emerald-500"></span></span>ao vivo</span>
+            <svg class="size-6 animate-spin text-pink-400" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" class="opacity-25"></circle>
+              <path d="M22 12a10 10 0 0 0-10-10" stroke="currentColor" stroke-width="4"></path>
+            </svg>
+            <span class="rounded-lg bg-white/10 px-3 py-1 backdrop-blur ring-1 ring-white/20">vidro fosco</span>
+            <span class="animate-pulse rounded bg-white/20 h-4 w-32"></span>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-4">
+        <h2 class="text-4xl font-extrabold text-indigo-700">Layout com barra lateral</h2>
+        <div class="grid gap-6 md:grid-cols-[2fr_1fr]">
+          <div class="space-y-3">
+            <div class="aspect-video rounded-xl bg-gradient-to-tr from-sky-400 via-indigo-500 to-fuchsia-500 grid place-items-center text-white text-2xl font-bold">
+              aspect-video</div>
+            <p class="line-clamp-2 text-slate-600">Texto longo cortado em duas linhas com line-clamp. Lorem ipsum dolor sit
+              amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
+              ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+          </div>
+          <aside class="rounded-xl border-l-4 border-indigo-600 bg-indigo-50 p-4 space-y-2">
+            <h3 class="font-bold text-indigo-800">Barra lateral</h3>
+            <ul class="list-disc pl-5 text-slate-700">
+              <li>grade com frações</li>
+              <li>proporção fixa</li>
+              <li>borda lateral</li>
+            </ul>
+          </aside>
+        </div>
+      </section>
+
+      <div class="tw-closing rounded-xl bg-indigo-600 p-6 text-center text-white">
+        <p class="text-2xl font-bold">Fechamento feito com utilitários</p>
+        <p class="text-indigo-100">closingSelector: '.tw-closing'</p>
+      </div>
+    </article>
+
+    <!-- Roteiro com componentes .deck-* misturados a utilitários -->
+    <article id="tw-deck" class="bg-white rounded-xl p-6">
+      <p>Roteiro próprio, oculto na página.</p>
+      <div class="presentation-deck" hidden>
+        <div class="deck-slide" data-variant="cover">
+          <h1 class="deck-title">Capa do roteiro</h1>
+          <p class="deck-text">Componentes do tema com o Tailwind carregado.</p>
+        </div>
+        <div class="deck-slide">
+          <h2 class="deck-title" id="probe-size">Título .deck-title</h2>
+          <h2 class="deck-title text-red-600" id="probe-color">.deck-title com text-red-600</h2>
+          <ul class="deck-checklist">
+            <li>o reset não apaga as marcas</li>
+            <li>os utilitários vencem o tema</li>
+          </ul>
+        </div>
+      </div>
+    </article>
+
+    <!-- Referências para comparar cores calculadas pelo Tailwind -->
+    <p class="sr-only"><span id="ref-red" class="text-red-600">ref</span></p>
+  </main>
+
+  <script src="page-presenter.js"></script>
+  <script>
+    const results = document.getElementById('results');
+    function check(name, condition) {
+      const li = document.createElement('li');
+      li.className = condition ? 'pass' : 'fail';
+      li.textContent = (condition ? '✓ ' : '✗ ') + name;
+      results.appendChild(li);
+    }
+
+    const zeroBox = () => {
+      // Caixa do slide zerada: o visual fica por conta dos utilitários
+      const root = document.documentElement.style;
+      root.setProperty('--pp-slide-bg', 'transparent');
+      root.setProperty('--pp-slide-shadow', 'none');
+      root.setProperty('--pp-slide-padding', '0');
+      root.setProperty('--pp-slide-padding-sm', '0');
+    };
+    const restoreBox = () => ['--pp-slide-bg', '--pp-slide-shadow', '--pp-slide-padding', '--pp-slide-padding-sm']
+      .forEach(v => document.documentElement.style.removeProperty(v));
+
+    const presentUtilities = () => {
+      zeroBox();
+      PagePresenter.open({
+        source: '#tw-article',
+        title: 'Só utilitários',
+        closingSelector: '.tw-closing',
+        slideClass: 'bg-white rounded-2xl p-10 shadow-xl'
+      });
+    };
+    const presentDeck = () => {
+      restoreBox();
+      PagePresenter.open({ source: '#tw-deck' });
+    };
+    document.getElementById('btn-utilities').addEventListener('click', presentUtilities);
+    document.getElementById('btn-deck').addEventListener('click', presentDeck);
+
+    // O Tailwind do CDN gera o CSS de classes novas (como as do slideClass) depois que elas entram no DOM
+    const tick = () => new Promise(resolve => setTimeout(resolve, 300));
+
+    async function run() {
+      // Tailwind carregou?
+      const tailwindOk = getComputedStyle(document.body).backgroundColor !== 'rgba(0, 0, 0, 0)';
+      check('Tailwind carregou pelo CDN (sem internet, as demais linhas não valem)', tailwindOk);
+
+      // Moldura
+      presentUtilities();
+      await tick();
+      const slide = document.querySelector('.presentation-slide');
+      const inner = slide.firstChild;
+      const closeBtn = document.querySelector('.presentation-close-btn');
+      check('slide é <div> e não herda a regra "section" da página',
+        slide.tagName === 'DIV' && getComputedStyle(slide).borderTopWidth === '0px');
+      check('caixa do slide com box-sizing border-box', getComputedStyle(inner).boxSizing === 'border-box');
+      check('× mede 40×40 e o ícone aparece apesar do reset',
+        closeBtn.offsetWidth === 40 && closeBtn.offsetHeight === 40 && closeBtn.querySelector('svg').getBoundingClientRect().width === 20);
+      check('slideClass aplica utilitários ao recipiente e eles vencem a caixa do módulo', inner.classList.contains('p-10') &&
+        getComputedStyle(inner).paddingTop === '40px');
+      const expected = document.querySelectorAll('#tw-article > section, #tw-article > .tw-closing').length + 1;
+      check(`gera ${expected} slides e o contador mostra 1 / ${expected}`,
+        document.querySelector('.presentation-counter').textContent === `1 / ${expected}`);
+      const wide = [];
+      for (let i = 0; i < expected; i++) {
+        PagePresenter.goTo(i);
+        const box = document.querySelector('.presentation-slide.active').firstChild;
+        if (box.scrollWidth > box.clientWidth + 1) wide.push(i + 1);
+      }
+      check(`nenhum slide estoura na horizontal${wide.length ? ' (estouram: ' + wide.join(', ') + ')' : ''}`, !wide.length);
+      PagePresenter.goTo(0);
+      PagePresenter.next();
+      PagePresenter.next();
+      check('passos [data-step] funcionam com o reset do Tailwind',
+        document.querySelectorAll('.presentation-slide.active .presentation-step-visible').length === 0 &&
+        PagePresenter.currentIndex() === 2);
+      PagePresenter.close();
+
+      // Tema + utilitários
+      presentDeck();
+      PagePresenter.next();
+      const size = document.querySelector('.presentation-slide.active h2.deck-title');
+      const color = document.querySelector('.presentation-slide.active .text-red-600');
+      check('roteiro oculto na página (.presentation-deck[hidden])',
+        getComputedStyle(document.querySelector('#tw-deck .presentation-deck')).display === 'none');
+      check('.deck-title vence o reset do Tailwind (h2 não herda o tamanho do texto)',
+        getComputedStyle(size).fontSize === '33.6px');
+      check('utilitário text-red-600 vence o .deck-title (módulo na camada components)',
+        getComputedStyle(color).color === getComputedStyle(document.getElementById('ref-red')).color);
+      const marker = document.querySelector('.presentation-slide.active .deck-checklist li');
+      check('marcas ✓ do .deck-checklist continuam com o reset', getComputedStyle(marker, '::before').content.includes('✓'));
+      PagePresenter.close();
+      restoreBox();
+    }
+
+    // O Tailwind do CDN gera o CSS depois de carregar a página
+    window.addEventListener('load', () => setTimeout(run, 400));
+  </script>
+</body>
+
+</html>

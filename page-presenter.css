@@ -1,6 +1,8 @@
 /* ==========================================================================
-   Page Presenter — apresentação de slides em tela cheia
-   Personalize as cores redefinindo as variáveis --pp-* no seu CSS.
+   Page Presenter: moldura da apresentação (obrigatório)
+   Overlay, palco, slide ativo, botão ×, rodapé, progresso, passos e notas.
+   O visual dos slides (capa, componentes .deck-*) fica em page-presenter-deck.css,
+   que é opcional. Personalize redefinindo as variáveis --pp-* no seu CSS.
    ========================================================================== */
 :root {
   --pp-bg: #f4f6f9;
@@ -27,6 +29,25 @@
   --pp-shadow-md: 0 4px 6px -1px rgba(0, 75, 130, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
   --pp-shadow-lg: 0 10px 15px -3px rgba(0, 75, 130, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
   --pp-transition: 0.18s ease-in-out;
+
+  /* Caixa que envolve o conteúdo de cada slide. Para deixar o visual com um framework,
+     zere a caixa: --pp-slide-bg: transparent; --pp-slide-shadow: none; --pp-slide-padding: 0 */
+  --pp-slide-bg: var(--pp-surface);
+  --pp-slide-shadow: var(--pp-shadow-lg);
+  --pp-slide-radius: var(--pp-radius-lg);
+  --pp-slide-padding: 2.5rem 3rem;
+  --pp-slide-padding-sm: 1.5rem 1.25rem;
+  --pp-slide-max-width: 960px;
+}
+
+/* A moldura define o próprio box-sizing: com ou sem o reset de um framework, o resultado é o mesmo */
+.presentation-overlay,
+.presentation-overlay .presentation-slide,
+.presentation-overlay .presentation-slide-inner,
+.presentation-overlay .presentation-close-btn,
+.presentation-overlay .presentation-footer,
+.presentation-overlay .presentation-progress {
+  box-sizing: border-box;
 }
 
 .presentation-overlay {
@@ -56,6 +77,7 @@ body.presentation-active {
   display: none;
   position: absolute;
   inset: 0;
+  margin: 0;
   padding: 4.5rem 6vw 4rem;
   overflow-y: auto;
   align-items: center;
@@ -70,73 +92,16 @@ body.presentation-active {
 /* margin:auto mantém o slide centralizado sem cortar o topo quando há rolagem */
 .presentation-slide-inner {
   width: 100%;
-  max-width: 960px;
+  max-width: var(--pp-slide-max-width);
   margin: auto;
-  background: var(--pp-surface);
-  border-radius: var(--pp-radius-lg);
-  box-shadow: var(--pp-shadow-lg);
-  padding: 2.5rem 3rem;
+  padding: var(--pp-slide-padding);
+  background: var(--pp-slide-bg);
+  border-radius: var(--pp-slide-radius);
+  box-shadow: var(--pp-slide-shadow);
 }
 
-.presentation-slide-inner > * {
-  margin-top: 0;
-  margin-bottom: 0;
-}
-
-.presentation-slide-inner > * + * {
-  margin-top: 1.25rem;
-}
-
-/* Capa */
-.slide-cover {
-  background: linear-gradient(135deg, var(--pp-primary-deep) 0%, var(--pp-primary) 100%);
-}
-
-.slide-cover .presentation-slide-inner {
-  background: transparent;
-  box-shadow: none;
-  color: var(--pp-text-inverse);
-}
-
-.slide-category {
-  display: inline-block;
-  padding: 0.3rem 0.8rem;
-  font-size: 0.8rem;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  color: var(--pp-primary-deep);
-  background: var(--pp-highlight);
-  border-radius: var(--pp-radius-full);
-}
-
-.slide-cover-title {
-  font-size: 2.6rem;
-  line-height: 1.2;
-  font-weight: 800;
-  color: var(--pp-text-inverse);
-}
-
-.slide-cover-body {
-  margin-top: 1.75rem;
-}
-
-.slide-cover-body p {
-  color: rgba(255, 255, 255, 0.88);
-  border-left-color: var(--pp-highlight);
-}
-
-.slide-cover-body p + p {
-  margin-top: 1rem;
-}
-
-/* Fechamento */
-.slide-closing .presentation-slide-inner {
-  padding: 1.5rem;
-  font-size: 1.1rem;
-}
-
-/* Botão de fechar: discreto, ganha destaque no hover/foco */
+/* Botão de fechar: discreto, ganha destaque no hover/foco.
+   Define tudo o que usa, porque os resets de framework estilizam button e svg. */
 .presentation-close-btn {
   position: absolute;
   top: 1rem;
@@ -147,18 +112,26 @@ body.presentation-active {
   justify-content: center;
   width: 40px;
   height: 40px;
+  margin: 0;
   padding: 0;
+  font: inherit;
+  line-height: 1;
   color: var(--pp-text-muted);
   background: transparent;
   border: 1px solid transparent;
   border-radius: var(--pp-radius-full);
+  box-shadow: none;
   opacity: 0.35;
   cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
   transition: opacity var(--pp-transition), background var(--pp-transition),
     color var(--pp-transition), border-color var(--pp-transition);
 }
 
 .presentation-close-btn svg {
+  display: block;
+  flex: none;
   width: 20px;
   height: 20px;
 }
@@ -172,16 +145,6 @@ body.presentation-active {
   box-shadow: var(--pp-shadow-md);
 }
 
-/* Na capa (fundo escuro), o "x" fica claro */
-.presentation-overlay:has(.slide-cover.active) .presentation-close-btn {
-  color: var(--pp-text-inverse);
-}
-
-.presentation-overlay:has(.slide-cover.active) .presentation-close-btn:hover,
-.presentation-overlay:has(.slide-cover.active) .presentation-close-btn:focus-visible {
-  color: var(--pp-primary);
-}
-
 /* Rodapé: dica de navegação e contador */
 .presentation-footer {
   position: absolute;
@@ -193,6 +156,7 @@ body.presentation-active {
   align-items: center;
   padding: 0 1.5rem;
   font-size: 0.75rem;
+  line-height: 1.4;
   color: var(--pp-text-muted);
   pointer-events: none;
 }
@@ -204,10 +168,6 @@ body.presentation-active {
 .presentation-counter {
   font-weight: 700;
   font-variant-numeric: tabular-nums;
-}
-
-.presentation-overlay:has(.slide-cover.active) .presentation-footer {
-  color: rgba(255, 255, 255, 0.75);
 }
 
 .presentation-progress {
@@ -224,6 +184,26 @@ body.presentation-active {
   height: 100%;
   background: var(--pp-accent);
   transition: width 0.3s ease-out;
+}
+
+/* Roteiro próprio: o .presentation-deck fica oculto na página mesmo se um framework mexer em [hidden] */
+.presentation-deck[hidden] {
+  display: none !important;
+}
+
+/* Revelação passo a passo: [data-step] ocupa o espaço desde o início (o zoom não muda) */
+.presentation-slide [data-step] {
+  transition: opacity 0.3s ease-out;
+}
+
+.presentation-slide [data-step]:not(.presentation-step-visible) {
+  visibility: hidden;
+  opacity: 0;
+}
+
+/* Notas do apresentador: nunca aparecem na página nem no slide, só na janela de notas */
+.deck-notes {
+  display: none !important;
 }
 
 @keyframes presentation-fade {
@@ -243,7 +223,8 @@ body.presentation-active {
     animation: none;
   }
 
-  .presentation-progress-bar {
+  .presentation-progress-bar,
+  .presentation-slide [data-step] {
     transition: none;
   }
 }
@@ -254,11 +235,7 @@ body.presentation-active {
   }
 
   .presentation-slide-inner {
-    padding: 1.5rem 1.25rem;
-  }
-
-  .slide-cover-title {
-    font-size: 1.8rem;
+    padding: var(--pp-slide-padding-sm);
   }
 
   .presentation-hint {
@@ -269,226 +246,5 @@ body.presentation-active {
 @media print {
   .presentation-overlay {
     display: none !important;
-  }
-}
-
-/* ==========================================================================
-   Roteiro próprio (.presentation-deck) e componentes de slide (.deck-*)
-   ========================================================================== */
-.presentation-deck[hidden] {
-  display: none !important;
-}
-
-.slide-deck .presentation-slide-inner {
-  padding: 3rem 3.5rem;
-}
-
-.deck-title {
-  font-size: 2.1rem;
-  line-height: 1.2;
-  font-weight: 800;
-  color: var(--pp-primary);
-}
-
-.deck-subtitle {
-  font-size: 0.9rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--pp-accent);
-}
-
-.presentation-slide-inner > .deck-subtitle {
-  margin-top: 0.5rem;
-}
-
-.deck-text {
-  font-size: 1.15rem;
-  line-height: 1.6;
-  color: var(--pp-text-secondary);
-}
-
-.deck-statement {
-  font-size: 1.3rem;
-  line-height: 1.5;
-  font-weight: 700;
-  color: var(--pp-text);
-  padding-left: 1rem;
-  border-left: 4px solid var(--pp-accent);
-}
-
-/* Fluxo com setas: etapa → etapa → ... */
-.deck-flow {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.75rem 2rem;
-  list-style: none;
-  padding: 0;
-}
-
-.deck-flow li {
-  position: relative;
-  padding: 0.55rem 1.1rem;
-  font-size: 1rem;
-  font-weight: 800;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--pp-text-inverse);
-  background: var(--pp-primary);
-  border-radius: var(--pp-radius-full);
-}
-
-.deck-flow li:not(:last-child)::after {
-  content: "→";
-  position: absolute;
-  right: -1.55rem;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: var(--pp-accent);
-}
-
-.deck-flow-muted li {
-  font-weight: 600;
-  text-transform: none;
-  letter-spacing: 0;
-  color: var(--pp-text-secondary);
-  background: var(--pp-subtle);
-  border: 1px solid var(--pp-border);
-}
-
-/* Lista com marcas de ✓ */
-.deck-checklist {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 0.6rem 1.5rem;
-  list-style: none;
-  padding: 0;
-}
-
-.deck-checklist li {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  font-size: 1.1rem;
-  color: var(--pp-text);
-}
-
-.deck-checklist li::before {
-  content: "✓";
-  flex-shrink: 0;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 1.6rem;
-  height: 1.6rem;
-  font-size: 0.85rem;
-  font-weight: 800;
-  color: var(--pp-text-inverse);
-  background: var(--pp-success);
-  border-radius: var(--pp-radius-full);
-}
-
-/* Etiquetas (produtos, tags) */
-.deck-products {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.6rem;
-  list-style: none;
-  padding: 0;
-}
-
-.deck-products li {
-  padding: 0.5rem 1rem;
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--pp-primary);
-  background: var(--pp-accent-soft);
-  border: 1px solid var(--pp-accent);
-  border-radius: var(--pp-radius-md);
-}
-
-.deck-products li.deck-products-more {
-  font-weight: 600;
-  font-style: italic;
-  color: var(--pp-text-muted);
-  background: transparent;
-  border-style: dashed;
-  border-color: var(--pp-border);
-}
-
-/* Mensagem visual: bloco → bloco */
-.deck-network {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: 1.25rem;
-  padding-top: 0.5rem;
-}
-
-.deck-network-node {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.9rem 1.5rem;
-  font-size: 1.25rem;
-  font-weight: 800;
-  border-radius: var(--pp-radius-lg);
-  border: 2px solid;
-}
-
-.deck-network-node svg {
-  width: 32px;
-  height: 32px;
-}
-
-.deck-network-threat {
-  color: #fecaca;
-  background: rgba(220, 38, 38, 0.18);
-  border-color: rgba(248, 113, 113, 0.7);
-}
-
-.deck-network-response {
-  color: var(--pp-primary-deep);
-  background: var(--pp-highlight);
-  border-color: var(--pp-highlight);
-}
-
-.deck-network-arrow {
-  font-size: 2rem;
-  font-weight: 700;
-  color: var(--pp-highlight);
-}
-
-/* Capa do roteiro (fundo escuro) */
-.slide-cover .deck-title {
-  font-size: 2.6rem;
-  color: var(--pp-text-inverse);
-}
-
-.slide-cover .deck-text {
-  color: rgba(255, 255, 255, 0.85);
-}
-
-.slide-cover .deck-statement {
-  color: var(--pp-text-inverse);
-  border-left-color: var(--pp-highlight);
-}
-
-@media (max-width: 768px) {
-  .slide-deck .presentation-slide-inner {
-    padding: 1.5rem 1.25rem;
-  }
-
-  .deck-title,
-  .slide-cover .deck-title {
-    font-size: 1.6rem;
-  }
-
-  .deck-flow {
-    gap: 0.6rem 1.6rem;
   }
 }

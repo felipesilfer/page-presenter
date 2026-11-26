@@ -1,0 +1,626 @@
+/* ==========================================================================
+   Page Presenter: tema dos slides (opcional)
+   Ritmo entre blocos, capa, fechamento e componentes .deck-*.
+   Depende das variáveis --pp-* definidas em page-presenter.css. Quem monta os slides
+   com Tailwind, Bootstrap ou outro framework pode deixar de carregar este arquivo.
+   ========================================================================== */
+
+/* Espaço entre os blocos de um slide */
+.presentation-slide-inner > * {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.presentation-slide-inner > * + * {
+  margin-top: 1.25rem;
+}
+
+/* Capa: fundo escuro em toda a tela, sem a caixa branca */
+.presentation-cover {
+  --pp-slide-bg: transparent;
+  --pp-slide-shadow: none;
+  background: linear-gradient(135deg, var(--pp-primary-deep) 0%, var(--pp-primary) 100%);
+}
+
+.presentation-cover .presentation-slide-inner {
+  color: var(--pp-text-inverse);
+}
+
+.presentation-category {
+  display: inline-block;
+  padding: 0.3rem 0.8rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--pp-primary-deep);
+  background: var(--pp-highlight);
+  border-radius: var(--pp-radius-full);
+}
+
+.presentation-cover-title {
+  font-size: 2.6rem;
+  line-height: 1.2;
+  font-weight: 800;
+  color: var(--pp-text-inverse);
+}
+
+.presentation-cover-body {
+  margin-top: 1.75rem;
+}
+
+.presentation-cover-body p {
+  color: rgba(255, 255, 255, 0.88);
+  border-left-color: var(--pp-highlight);
+}
+
+.presentation-cover-body p + p {
+  margin-top: 1rem;
+}
+
+/* Na capa, o × e o rodapé ficam claros */
+.presentation-overlay:has(.presentation-cover.active) .presentation-close-btn {
+  color: var(--pp-text-inverse);
+}
+
+.presentation-overlay:has(.presentation-cover.active) .presentation-close-btn:hover,
+.presentation-overlay:has(.presentation-cover.active) .presentation-close-btn:focus-visible {
+  color: var(--pp-primary);
+}
+
+.presentation-overlay:has(.presentation-cover.active) .presentation-footer {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+/* Fechamento */
+.presentation-closing {
+  --pp-slide-padding: 1.5rem;
+}
+
+.presentation-closing .presentation-slide-inner {
+  font-size: 1.1rem;
+}
+
+/* Slides do roteiro próprio: um pouco mais de respiro */
+.presentation-from-deck {
+  --pp-slide-padding: 3rem 3.5rem;
+}
+
+/* ---- Componentes .deck-* ---- */
+
+.deck-title {
+  font-size: 2.1rem;
+  line-height: 1.2;
+  font-weight: 800;
+  color: var(--pp-primary);
+}
+
+.deck-subtitle {
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--pp-accent);
+}
+
+.presentation-slide-inner > .deck-subtitle {
+  margin-top: 0.5rem;
+}
+
+.deck-text {
+  font-size: 1.15rem;
+  line-height: 1.6;
+  color: var(--pp-text-secondary);
+}
+
+.deck-statement {
+  font-size: 1.3rem;
+  line-height: 1.5;
+  font-weight: 700;
+  color: var(--pp-text);
+  padding-left: 1rem;
+  border-left: 4px solid var(--pp-accent);
+}
+
+/* Fluxo com setas: etapa → etapa → ... */
+.deck-flow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 2rem;
+  list-style: none;
+  padding: 0;
+}
+
+.deck-flow li {
+  position: relative;
+  padding: 0.55rem 1.1rem;
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--pp-text-inverse);
+  background: var(--pp-primary);
+  border-radius: var(--pp-radius-full);
+}
+
+.deck-flow li:not(:last-child)::after {
+  content: "→";
+  position: absolute;
+  right: -1.55rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--pp-accent);
+}
+
+.deck-flow-muted li {
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--pp-text-secondary);
+  background: var(--pp-subtle);
+  border: 1px solid var(--pp-border);
+}
+
+/* Lista com marcas de ✓ */
+.deck-checklist {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 0.6rem 1.5rem;
+  list-style: none;
+  padding: 0;
+}
+
+.deck-checklist li {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 1.1rem;
+  color: var(--pp-text);
+}
+
+.deck-checklist li::before {
+  content: "✓";
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.6rem;
+  height: 1.6rem;
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--pp-text-inverse);
+  background: var(--pp-success);
+  border-radius: var(--pp-radius-full);
+}
+
+/* Etiquetas (produtos, tags) */
+.deck-products {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  list-style: none;
+  padding: 0;
+}
+
+.deck-products li {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--pp-primary);
+  background: var(--pp-accent-soft);
+  border: 1px solid var(--pp-accent);
+  border-radius: var(--pp-radius-md);
+}
+
+.deck-products li.deck-products-more {
+  font-weight: 600;
+  font-style: italic;
+  color: var(--pp-text-muted);
+  background: transparent;
+  border-style: dashed;
+  border-color: var(--pp-border);
+}
+
+/* Mensagem visual: bloco → bloco */
+.deck-network {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+  padding-top: 0.5rem;
+}
+
+.deck-network-node {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.9rem 1.5rem;
+  font-size: 1.25rem;
+  font-weight: 800;
+  border-radius: var(--pp-radius-lg);
+  border: 2px solid;
+}
+
+.deck-network-node svg {
+  width: 32px;
+  height: 32px;
+}
+
+.deck-network-threat {
+  color: #fecaca;
+  background: rgba(220, 38, 38, 0.18);
+  border-color: rgba(248, 113, 113, 0.7);
+}
+
+.deck-network-response {
+  color: var(--pp-primary-deep);
+  background: var(--pp-highlight);
+  border-color: var(--pp-highlight);
+}
+
+.deck-network-arrow {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--pp-highlight);
+}
+
+/* Números em destaque: <ul class="deck-stats"><li><strong>98%</strong> legenda</li></ul> */
+.deck-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  gap: 1.25rem;
+  list-style: none;
+  padding: 0;
+}
+
+.deck-stats li {
+  padding: 1.25rem 1rem;
+  text-align: center;
+  font-size: 1rem;
+  color: var(--pp-text-secondary);
+  background: var(--pp-subtle);
+  border: 1px solid var(--pp-border);
+  border-radius: var(--pp-radius-lg);
+}
+
+.deck-stats strong {
+  display: block;
+  margin-bottom: 0.25rem;
+  font-size: 2.6rem;
+  line-height: 1.1;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--pp-primary);
+}
+
+/* Colunas lado a lado; -compare destaca a última (antes × depois) */
+.deck-columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: 1.5rem;
+}
+
+.deck-columns > * {
+  padding: 1.25rem 1.5rem;
+  background: var(--pp-subtle);
+  border: 1px solid var(--pp-border);
+  border-radius: var(--pp-radius-lg);
+}
+
+.deck-columns > * > :first-child {
+  margin-top: 0;
+}
+
+.deck-columns > * > :last-child {
+  margin-bottom: 0;
+}
+
+.deck-columns h3 {
+  font-size: 1.2rem;
+  color: var(--pp-primary);
+}
+
+.deck-columns-compare > :first-child {
+  color: var(--pp-text-muted);
+}
+
+.deck-columns-compare > :last-child {
+  background: var(--pp-accent-soft);
+  border-color: var(--pp-accent);
+}
+
+/* Cartões: ícone, título e uma frase */
+.deck-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: 1.25rem;
+  list-style: none;
+  padding: 0;
+}
+
+.deck-cards li {
+  padding: 1.5rem;
+  background: var(--pp-surface);
+  border: 1px solid var(--pp-border);
+  border-top: 4px solid var(--pp-accent);
+  border-radius: var(--pp-radius-lg);
+  box-shadow: var(--pp-shadow-md);
+}
+
+.deck-cards svg {
+  width: 32px;
+  height: 32px;
+  color: var(--pp-accent);
+}
+
+.deck-cards h3 {
+  margin: 0.75rem 0 0.35rem;
+  font-size: 1.15rem;
+  color: var(--pp-primary);
+}
+
+.deck-cards p {
+  margin: 0;
+  color: var(--pp-text-secondary);
+}
+
+/* Imagem ou diagrama com legenda, sem distorcer */
+.deck-figure {
+  margin-left: 0;
+  margin-right: 0;
+  text-align: center;
+}
+
+.deck-figure img,
+.deck-figure svg,
+.deck-figure video {
+  max-width: 100%;
+  max-height: 60vh;
+  object-fit: contain;
+  border-radius: var(--pp-radius-md);
+}
+
+.deck-figure figcaption {
+  margin-top: 0.6rem;
+  font-size: 0.9rem;
+  color: var(--pp-text-muted);
+}
+
+/* Linha do tempo vertical; -done marca o que já foi concluído */
+.deck-timeline {
+  list-style: none;
+  margin-left: 0.5rem;
+  padding: 0;
+  border-left: 3px solid var(--pp-border);
+}
+
+.deck-timeline li {
+  position: relative;
+  padding: 0 0 1.1rem 1.5rem;
+  font-size: 1.1rem;
+}
+
+.deck-timeline li:last-child {
+  padding-bottom: 0;
+}
+
+.deck-timeline li::before {
+  content: "";
+  position: absolute;
+  left: calc(-0.5rem - 1.5px);
+  top: 0.35rem;
+  box-sizing: border-box;
+  width: 1rem;
+  height: 1rem;
+  background: var(--pp-surface);
+  border: 3px solid var(--pp-accent);
+  border-radius: var(--pp-radius-full);
+}
+
+.deck-timeline li.deck-timeline-done::before {
+  background: var(--pp-success);
+  border-color: var(--pp-success);
+}
+
+.deck-timeline time {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--pp-accent);
+}
+
+/* Barras de percentual: <li style="--value: 72">Rótulo</li> (valor inteiro de 0 a 100) */
+.deck-bars {
+  display: grid;
+  gap: 0.9rem;
+  list-style: none;
+  padding: 0;
+}
+
+.deck-bars li {
+  display: grid;
+  grid-template-columns: minmax(8rem, 14rem) 1fr;
+  align-items: center;
+  gap: 1rem;
+  font-weight: 600;
+  counter-reset: pp-value var(--value, 0);
+}
+
+.deck-bars li::after {
+  content: counter(pp-value) "%";
+  box-sizing: border-box;
+  width: calc(var(--value, 0) * 1%);
+  min-width: 3.5rem;
+  padding: 0.25rem 0.75rem;
+  text-align: right;
+  font-size: 0.9rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--pp-text-inverse);
+  background: linear-gradient(90deg, var(--pp-accent), var(--pp-primary));
+  border-radius: var(--pp-radius-full);
+}
+
+/* Citação com autor: <blockquote class="deck-quote"><p>…</p><cite>Autor</cite></blockquote> */
+.deck-quote {
+  position: relative;
+  margin-left: 0;
+  margin-right: 0;
+  padding: 0.5rem 0 0 3rem;
+  font-size: 1.45rem;
+  line-height: 1.5;
+  font-weight: 600;
+  font-style: italic;
+  color: var(--pp-text);
+}
+
+.deck-quote::before {
+  content: "“";
+  position: absolute;
+  left: 0;
+  top: -0.5rem;
+  font-size: 4.5rem;
+  line-height: 1;
+  font-style: normal;
+  color: var(--pp-accent);
+}
+
+.deck-quote p {
+  margin: 0;
+}
+
+.deck-quote cite {
+  display: block;
+  margin-top: 0.75rem;
+  font-size: 1rem;
+  font-style: normal;
+  font-weight: 700;
+  color: var(--pp-text-muted);
+}
+
+.deck-quote cite::before {
+  content: "— ";
+}
+
+/* Tabela legível em tela grande; .deck-num alinha números à direita */
+.deck-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 1.05rem;
+}
+
+.deck-table th,
+.deck-table td {
+  padding: 0.65rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--pp-border-light);
+}
+
+.deck-table thead th {
+  font-weight: 700;
+  color: var(--pp-text-inverse);
+  background: var(--pp-primary);
+}
+
+.deck-table thead th:first-child {
+  border-top-left-radius: var(--pp-radius-md);
+}
+
+.deck-table thead th:last-child {
+  border-top-right-radius: var(--pp-radius-md);
+}
+
+.deck-table tbody tr:nth-child(even) {
+  background: var(--pp-subtle);
+}
+
+.deck-table .deck-num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Bloco de código: <pre class="deck-code"><code>…</code></pre> */
+.deck-code {
+  padding: 1.25rem 1.5rem;
+  overflow-x: auto;
+  font: 1rem/1.6 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  tab-size: 2;
+  color: #e2e8f0;
+  background: #0f172a;
+  border-radius: var(--pp-radius-md);
+}
+
+.deck-code code {
+  font: inherit;
+}
+
+/* Componentes sobre a capa (fundo escuro) */
+.presentation-cover .deck-title {
+  font-size: 2.6rem;
+  color: var(--pp-text-inverse);
+}
+
+.presentation-cover .deck-text {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.presentation-cover .deck-statement {
+  color: var(--pp-text-inverse);
+  border-left-color: var(--pp-highlight);
+}
+
+.presentation-cover .deck-stats li {
+  color: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.presentation-cover .deck-stats strong {
+  color: var(--pp-highlight);
+}
+
+.presentation-cover .deck-quote {
+  color: var(--pp-text-inverse);
+}
+
+.presentation-cover .deck-quote::before {
+  color: var(--pp-highlight);
+}
+
+.presentation-cover .deck-quote cite {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+@media (max-width: 768px) {
+  .presentation-cover-title {
+    font-size: 1.8rem;
+  }
+
+  .deck-title,
+  .presentation-cover .deck-title {
+    font-size: 1.6rem;
+  }
+
+  .deck-flow {
+    gap: 0.6rem 1.6rem;
+  }
+
+  .deck-bars li {
+    grid-template-columns: 1fr;
+    gap: 0.35rem;
+  }
+
+  .deck-stats strong {
+    font-size: 2rem;
+  }
+
+  .deck-quote {
+    font-size: 1.2rem;
+  }
+}

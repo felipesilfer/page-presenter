@@ -23,7 +23,7 @@
       <p hidden>oculto</p>
       <div class="section" id="s1">um <button>remover</button></div>
       <p>solto</p>
-      <div class="section">dois</div>
+      <div class="section">dois <a href="#x">link</a></div>
       <div class="closing">fim</div>
     </div>
     <div id="deck-source">
@@ -31,6 +31,13 @@
       <div class="presentation-deck" hidden>
         <div class="deck-slide" data-variant="cover">capa</div>
         <div class="deck-slide">a</div>
+      </div>
+    </div>
+    <div id="steps-source">
+      <div class="presentation-deck" hidden>
+        <div class="deck-slide">um</div>
+        <div class="deck-slide">dois <p data-step>b</p> <p data-step>c</p> <p class="deck-notes">nota</p></div>
+        <div class="deck-slide">fim <p data-step>x</p></div>
       </div>
     </div>
   </div>
@@ -54,9 +61,12 @@
     check('capa contém o título e a introdução', s[0].textContent.includes('T') && s[0].textContent.includes('intro'));
     check('conteúdo solto acompanha a seção anterior', s[1].textContent.includes('solto'));
     check('remove botões e IDs dos clones', !s[1].querySelector('button') && !s[1].querySelector('#s1'));
-    check('último slide usa o visual de fechamento', s[3].classList.contains('slide-closing'));
+    check('último slide usa o visual de fechamento', s[3].classList.contains('presentation-closing'));
     check('primeiro slide ativo e contador 1 / 4',
       s[0].classList.contains('active') && document.querySelector('.presentation-counter').textContent === '1 / 4');
+    check('slides são <div>, para regras de "section" da página não vazarem', s[0].tagName === 'DIV');
+    check('caixa do slide com box-sizing próprio',
+      getComputedStyle(s[0].firstChild).boxSizing === 'border-box');
 
     // Navegação, com limites nas pontas
     PagePresenter.prev();
@@ -76,8 +86,17 @@
     check('Backspace volta', PagePresenter.currentIndex() === 1);
     press('End');
     check('End vai para o último slide', PagePresenter.currentIndex() === 3);
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Home', altKey: true }));
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Home', ctrlKey: true }));
+    check('ignora teclas com Alt/Ctrl (atalhos do navegador)', PagePresenter.currentIndex() === 3);
+    const field = document.createElement('input');
+    document.querySelector('.presentation-slide.active').firstChild.appendChild(field);
+    field.dispatchEvent(new KeyboardEvent('keydown', { key: ' ', bubbles: true }));
+    check('Espaço num campo de texto não troca de slide', PagePresenter.currentIndex() === 3);
+    field.remove();
     press('Escape');
     check('Esc fecha a apresentação', !PagePresenter.isOpen());
+    check('fechar zera o slide atual', PagePresenter.currentIndex() === 0);
     PagePresenter.open({ source: '#article', title: 'T', sectionSelector: '.section', closingSelector: '.closing' });
 
     // Fechar limpa os slides
@@ -88,11 +107,104 @@
     PagePresenter.open({ source: '#deck-source' });
     const d = slidesInDom();
     check('roteiro próprio gera 2 slides e ignora o conteúdo', d.length === 2 && !d[0].textContent.includes('ignorado'));
-    check('data-variant="cover" usa o visual de capa', d[0].classList.contains('slide-cover'));
+    check('data-variant="cover" usa o visual de capa', d[0].classList.contains('presentation-cover'));
     PagePresenter.close();
 
     // Origem inexistente não abre
     check('origem inexistente não abre', PagePresenter.open({ source: '#nao-existe' }) === false && !PagePresenter.isOpen());
+
+    const openArticle = (extra) => PagePresenter.open(Object.assign(
+      { source: '#article', title: 'T', sectionSelector: '.section', closingSelector: '.closing' }, extra));
+    const closeBtn = document.querySelector('.presentation-close-btn');
+    const activeInner = () => document.querySelector('.presentation-slide.active').firstChild;
+
+    // Tab circula entre o × e os focáveis do slide ativo
+    openArticle();
+    PagePresenter.goTo(2);
+    const link = activeInner().querySelector('a');
+    press('Tab');
+    check('Tab vai para o ×', document.activeElement === closeBtn);
+    press('Tab');
+    check('Tab alcança o link do slide', document.activeElement === link);
+    press('Tab');
+    check('Tab volta ao × depois do último focável', document.activeElement === closeBtn);
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', shiftKey: true }));
+    check('Shift+Tab volta para o link', document.activeElement === link);
+
+    // Clique: metade direita avança, esquerda volta, links não navegam
+    const click = (el, x) => el.dispatchEvent(new MouseEvent('click', { bubbles: true, clientX: x }));
+    click(activeInner(), window.innerWidth - 5);
+    check('clique na metade direita avança', PagePresenter.currentIndex() === 3);
+    click(activeInner(), 5);
+    check('clique na metade esquerda volta', PagePresenter.currentIndex() === 2);
+    link.addEventListener('click', (e) => e.preventDefault());
+    click(link, window.innerWidth - 5);
+    check('clique num link não troca de slide', PagePresenter.currentIndex() === 2);
+
+    // Abrir com a apresentação já aberta troca os slides sem fechar
+    PagePresenter.open({ source: '#deck-source' });
+    check('reabrir já aberta troca os slides', PagePresenter.isOpen() && PagePresenter.slideCount() === 2 &&
+      PagePresenter.currentIndex() === 0);
+    PagePresenter.close();
+
+    // Textos da interface e callback de troca
+    const calls = [];
+    openArticle({ labels: { hint: 'Use as setas', close: 'Sair' }, onChange: (i, total) => calls.push(`${i}/${total}`) });
+    check('labels trocam a dica e o rótulo do ×',
+      document.querySelector('.presentation-hint').textContent === 'Use as setas' &&
+      closeBtn.getAttribute('aria-label') === 'Sair');
+    PagePresenter.next();
+    PagePresenter.prev();
+    PagePresenter.prev();
+    check('onChange avisa só quando o slide muda', calls.join(',') === '0/4,1/4,0/4');
+    PagePresenter.close();
+    openArticle();
+    check('sem labels volta aos textos padrão', closeBtn.getAttribute('aria-label') === 'Sair da apresentação');
+    PagePresenter.close();
+
+    // hash: abre no slide da URL e atualiza a URL ao navegar
+    location.replace('#slide-3');
+    openArticle({ hash: true });
+    check('hash abre no slide indicado na URL', PagePresenter.currentIndex() === 2);
+    PagePresenter.prev();
+    check('hash atualiza a URL ao navegar', location.hash === '#slide-2');
+    PagePresenter.close();
+
+    // slideClass: classes de framework no recipiente de cada slide
+    openArticle({ slideClass: 'prose lg:prose-xl' });
+    check('slideClass vai para o recipiente de cada slide', Array.from(slidesInDom()).every(sl =>
+      sl.firstChild.classList.contains('presentation-slide-inner') && sl.firstChild.classList.contains('prose') &&
+      sl.firstChild.classList.contains('lg:prose-xl')));
+    PagePresenter.close();
+
+    // Revelação passo a passo com [data-step]
+    PagePresenter.open({ source: '#steps-source' });
+    const shown = () => document.querySelectorAll('.presentation-slide.active .presentation-step-visible').length;
+    PagePresenter.next();
+    check('entrar num slide com passos começa sem nenhum revelado', PagePresenter.currentIndex() === 1 && shown() === 0);
+    PagePresenter.next();
+    check('avançar revela um passo sem trocar de slide', PagePresenter.currentIndex() === 1 && shown() === 1);
+    PagePresenter.next();
+    PagePresenter.next();
+    check('depois do último passo, avançar troca de slide', PagePresenter.currentIndex() === 2 && shown() === 0);
+    PagePresenter.prev();
+    check('voltar para um slide mostra todos os passos', PagePresenter.currentIndex() === 1 && shown() === 2);
+    PagePresenter.prev();
+    check('voltar esconde o último passo revelado', PagePresenter.currentIndex() === 1 && shown() === 1);
+    press('End');
+    press('ArrowRight');
+    press('ArrowRight');
+    check('no último slide, avançar além do fim mantém os passos revelados',
+      PagePresenter.currentIndex() === 2 && shown() === 1);
+    const hiddenStep = document.querySelector('.presentation-slide.active [data-step]');
+    press('ArrowLeft');
+    check('passo escondido fica invisível no slide', getComputedStyle(hiddenStep).visibility === 'hidden');
+
+    // Notas do apresentador
+    PagePresenter.goTo(1);
+    const note = document.querySelector('.presentation-slide.active .deck-notes');
+    check('.deck-notes não aparece no slide', note && getComputedStyle(note).display === 'none');
+    PagePresenter.close();
   </script>
 </body>
 

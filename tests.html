@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Page Presenter — Testes</title>
+  <link rel="stylesheet" href="page-presenter.css">
+  <style>
+    body { font-family: system-ui, sans-serif; padding: 1.5rem; }
+    .pass { color: #0d8a43; }
+    .fail { color: #dc2626; font-weight: 700; }
+  </style>
+</head>
+
+<body>
+  <h1>Testes do Page Presenter</h1>
+  <p>Abra esta página no navegador. Cada linha abaixo deve aparecer em verde.</p>
+  <ul id="results"></ul>
+
+  <div id="fixture" hidden>
+    <div id="article">
+      <p>intro</p>
+      <p hidden>oculto</p>
+      <div class="section" id="s1">um <button>remover</button></div>
+      <p>solto</p>
+      <div class="section">dois</div>
+      <div class="closing">fim</div>
+    </div>
+    <div id="deck-source">
+      <p>ignorado</p>
+      <div class="presentation-deck" hidden>
+        <div class="deck-slide" data-variant="cover">capa</div>
+        <div class="deck-slide">a</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="page-presenter.js"></script>
+  <script>
+    const results = document.getElementById('results');
+    function check(name, condition) {
+      const li = document.createElement('li');
+      li.className = condition ? 'pass' : 'fail';
+      li.textContent = (condition ? '✓ ' : '✗ ') + name;
+      results.appendChild(li);
+    }
+    const slidesInDom = () => document.querySelectorAll('.presentation-slide');
+
+    // Slides gerados a partir do conteúdo: capa + 2 seções + fechamento
+    PagePresenter.open({ source: '#article', title: 'T', sectionSelector: '.section', closingSelector: '.closing' });
+    const s = slidesInDom();
+    check('abre a apresentação', PagePresenter.isOpen());
+    check('gera 4 slides (capa, 2 seções, fechamento)', s.length === 4);
+    check('capa contém o título e a introdução', s[0].textContent.includes('T') && s[0].textContent.includes('intro'));
+    check('conteúdo solto acompanha a seção anterior', s[1].textContent.includes('solto'));
+    check('remove botões e IDs dos clones', !s[1].querySelector('button') && !s[1].querySelector('#s1'));
+    check('último slide usa o visual de fechamento', s[3].classList.contains('slide-closing'));
+    check('primeiro slide ativo e contador 1 / 4',
+      s[0].classList.contains('active') && document.querySelector('.presentation-counter').textContent === '1 / 4');
+
+    // Navegação, com limites nas pontas
+    PagePresenter.prev();
+    check('não volta antes do primeiro slide', PagePresenter.currentIndex() === 0);
+    PagePresenter.goTo(99);
+    check('não avança depois do último slide', PagePresenter.currentIndex() === 3);
+    check('conteúdo oculto da página continua oculto no slide', s[0].querySelector('p[hidden]') !== null);
+
+    // Teclado (sem gesto do usuário a tela cheia é recusada e o Esc vem pelo keydown)
+    const press = (key) => document.dispatchEvent(new KeyboardEvent('keydown', { key }));
+    press('Home');
+    check('Home vai para o primeiro slide', PagePresenter.currentIndex() === 0);
+    press('ArrowRight');
+    press(' ');
+    check('→ e Espaço avançam', PagePresenter.currentIndex() === 2);
+    press('Backspace');
+    check('Backspace volta', PagePresenter.currentIndex() === 1);
+    press('End');
+    check('End vai para o último slide', PagePresenter.currentIndex() === 3);
+    press('Escape');
+    check('Esc fecha a apresentação', !PagePresenter.isOpen());
+    PagePresenter.open({ source: '#article', title: 'T', sectionSelector: '.section', closingSelector: '.closing' });
+
+    // Fechar limpa os slides
+    PagePresenter.close();
+    check('fecha e limpa os slides', !PagePresenter.isOpen() && slidesInDom().length === 0);
+
+    // Roteiro próprio substitui o conteúdo
+    PagePresenter.open({ source: '#deck-source' });
+    const d = slidesInDom();
+    check('roteiro próprio gera 2 slides e ignora o conteúdo', d.length === 2 && !d[0].textContent.includes('ignorado'));
+    check('data-variant="cover" usa o visual de capa', d[0].classList.contains('slide-cover'));
+    PagePresenter.close();
+
+    // Origem inexistente não abre
+    check('origem inexistente não abre', PagePresenter.open({ source: '#nao-existe' }) === false && !PagePresenter.isOpen());
+  </script>
+</body>
+
+</html>

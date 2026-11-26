@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Page Presenter — Demonstração</title>
+  <link rel="stylesheet" href="page-presenter.css">
+  <style>
+    /* Estilos apenas desta página de demonstração */
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      color: #1e293b;
+      background: #f4f6f9;
+      line-height: 1.6;
+    }
+
+    main {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 2rem 1rem 4rem;
+    }
+
+    article {
+      background: #ffffff;
+      border: 1px solid #dbe3eb;
+      border-radius: 12px;
+      padding: 2rem;
+      margin-top: 1.5rem;
+    }
+
+    .actions {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .actions button {
+      padding: 0.5rem 1rem;
+      font: inherit;
+      font-weight: 600;
+      color: #ffffff;
+      background: #004b82;
+      border: 0;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .lead {
+      font-size: 1.15rem;
+      padding-left: 1rem;
+      border-left: 4px solid #004b82;
+    }
+
+    .section h2 {
+      color: #004b82;
+    }
+
+    .closing {
+      background: #f0f7fc;
+      border-left: 4px solid #008bd2;
+      padding: 1.25rem;
+    }
+  </style>
+</head>
+
+<body>
+  <main>
+    <h1>Page Presenter</h1>
+    <p>Transforma o conteúdo de uma página em uma apresentação de slides em tela cheia.</p>
+
+    <div class="actions">
+      <button type="button" id="btn-present-article">Apresentar artigo</button>
+      <button type="button" id="btn-present-deck">Apresentar roteiro próprio</button>
+    </div>
+
+    <!-- Exemplo 1: slides gerados a partir do conteúdo -->
+    <article id="article">
+      <p class="lead">O conteúdo antes da primeira seção vai para a capa, junto com o título.</p>
+      <p>Este parágrafo também entra na capa.</p>
+
+      <div class="section">
+        <h2>Primeira seção</h2>
+        <p>Cada elemento que corresponde a <code>sectionSelector</code> vira um slide.</p>
+      </div>
+
+      <div class="section">
+        <h2>Segunda seção</h2>
+        <ul>
+          <li>Navegue com as setas, Espaço e Backspace.</li>
+          <li>Home e End levam ao primeiro e ao último slide.</li>
+          <li>Esc ou o botão × encerram a apresentação.</li>
+        </ul>
+      </div>
+
+      <p>Conteúdo solto depois de uma seção acompanha o slide da seção anterior.</p>
+
+      <div class="closing">
+        <strong>Fechamento:</strong> elementos que correspondem a <code>closingSelector</code> usam o visual de
+        fechamento.
+      </div>
+    </article>
+
+    <!-- Exemplo 2: roteiro próprio, oculto na página -->
+    <article id="article-deck">
+      <p>Este artigo tem um roteiro próprio (<code>.presentation-deck</code>), invisível na página e usado no lugar
+        do conteúdo ao apresentar.</p>
+
+      <div class="presentation-deck" hidden>
+        <div class="deck-slide" data-variant="cover">
+          <h1 class="deck-title">Um roteiro escrito à mão</h1>
+          <p class="deck-text">Slides com o visual de capa usam <code>data-variant="cover"</code>.</p>
+          <p class="deck-statement">Use os componentes <code>.deck-*</code> para montar cada slide.</p>
+        </div>
+
+        <div class="deck-slide">
+          <h2 class="deck-title">Fluxo de etapas</h2>
+          <p class="deck-subtitle">.deck-flow</p>
+          <ol class="deck-flow">
+            <li>Planejar</li>
+            <li>Construir</li>
+            <li>Apresentar</li>
+          </ol>
+          <ol class="deck-flow deck-flow-muted">
+            <li>rascunho</li>
+            <li>revisão</li>
+            <li>versão final</li>
+          </ol>
+        </div>
+
+        <div class="deck-slide">
+          <h2 class="deck-title">Listas e etiquetas</h2>
+          <ul class="deck-checklist">
+            <li>sem dependências;</li>
+            <li>tela cheia nativa;</li>
+            <li>teclado e toque;</li>
+            <li>ajuste automático à tela.</li>
+          </ul>
+          <ul class="deck-products">
+            <li>HTML</li>
+            <li>CSS</li>
+            <li>JavaScript</li>
+            <li class="deck-products-more">e nada mais</li>
+          </ul>
+        </div>
+      </div>
+    </article>
+  </main>
+
+  <script src="page-presenter.js"></script>
+  <script>
+    document.getElementById('btn-present-article').addEventListener('click', () => {
+      PagePresenter.open({
+        source: '#article',
+        title: 'Demonstração do Page Presenter',
+        category: 'Exemplo',
+        sectionSelector: '.section',
+        closingSelector: '.closing'
+      });
+    });
+
+    document.getElementById('btn-present-deck').addEventListener('click', () => {
+      PagePresenter.open({ source: '#article-deck' });
+    });
+  </script>
+</body>
+
+</html>

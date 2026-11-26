@@ -9,8 +9,8 @@
        acima do reset (base) e abaixo dos utilitários. É o @import … layer(components) do README. -->
   <style>
     @layer theme, base, components, utilities;
-    @import url("page-presenter.css") layer(components);
-    @import url("page-presenter-deck.css") layer(components);
+    @import url("../page-presenter.css") layer(components);
+    @import url("../page-presenter-deck.css") layer(components);
   </style>
   <!-- Precisa de internet. Versão fixa para o teste não mudar sozinho. -->
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.1.11"></script>
@@ -251,7 +251,7 @@
     <p class="sr-only"><span id="ref-red" class="text-red-600">ref</span></p>
   </main>
 
-  <script src="page-presenter.js"></script>
+  <script src="../page-presenter.js"></script>
   <script>
     const results = document.getElementById('results');
     function check(name, condition) {

@@ -51,8 +51,8 @@ Chame `open()` a partir de um clique. Sem um gesto do usuário, o navegador recu
 | `page-presenter.css` | sim | A moldura: overlay, slide ativo, botão ×, rodapé, progresso, passos e notas. Também define as variáveis `--pp-*`. |
 | `page-presenter-deck.css` | não | O tema dos slides: espaçamento entre blocos, capa, fechamento e componentes `.deck-*`. |
 | `index.html` | — | Esta documentação, com demonstrações de todos os recursos. |
-| `tests.html` | — | Testes: abra no navegador e confira se todas as linhas ficam verdes. |
-| `test-tailwind.html`, `test-bootstrap.html` | — | Testes de convivência com Tailwind 4 e Bootstrap 5.3, carregados por CDN (precisam de internet). |
+| `tests/tests.html` | — | Testes: abra no navegador e confira se todas as linhas ficam verdes. |
+| `tests/test-tailwind.html`, `tests/test-bootstrap.html` | — | Testes de convivência com Tailwind 4 e Bootstrap 5.3, carregados por CDN (precisam de internet). |
 
 Sem o `page-presenter-deck.css`, a apresentação continua funcionando. Os slides passam a usar só o CSS da sua página ou do seu framework.
 
@@ -285,9 +285,9 @@ A moldura foi feita para conviver com os resets dos frameworks (Preflight do Tai
 
 ## Testes
 
-Abra `tests.html` no navegador e confira se todas as linhas aparecem em verde. A página carrega só o `page-presenter.css`, o que também confirma que a moldura funciona sem o tema.
+Abra `tests/tests.html` no navegador e confira se todas as linhas aparecem em verde. A página carrega só o `page-presenter.css`, o que também confirma que a moldura funciona sem o tema.
 
-`test-tailwind.html` e `test-bootstrap.html` carregam o framework por CDN e conferem a convivência:
+`tests/test-tailwind.html` e `tests/test-bootstrap.html` carregam o framework por CDN e conferem a convivência:
 - os slides não herdam regras de `section` da página;
 - o × e a caixa do slide resistem ao reset do framework;
 - os componentes `.deck-*` vencem o reset;
@@ -299,7 +299,7 @@ Os botões dessas páginas permitem conferir o visual à mão.
 As páginas também rodam sem interface, no Chrome ou no Edge:
 
 ```sh
-chrome --headless=new --virtual-time-budget=8000 --dump-dom file:///caminho/tests.html | grep -o 'class="fail"' | wc -l
+chrome --headless=new --virtual-time-budget=8000 --dump-dom file:///caminho/tests/tests.html | grep -o 'class="fail"' | wc -l
 ```
 
 O resultado `0` significa que nenhuma verificação falhou.

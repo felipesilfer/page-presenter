@@ -215,9 +215,9 @@
                 capa, fechamento e componentes <code>.deck-*</code>.</td></tr>
             <tr><td><code>index.html</code></td><td>—</td><td>Esta documentação, com demonstrações de todos os
                 recursos.</td></tr>
-            <tr><td><code>tests.html</code></td><td>—</td><td>Testes: abra no navegador e confira se todas as linhas
+            <tr><td><code>tests/tests.html</code></td><td>—</td><td>Testes: abra no navegador e confira se todas as linhas
                 ficam verdes.</td></tr>
-            <tr><td><code>test-tailwind.html</code>, <code>test-bootstrap.html</code></td><td>—</td><td>Testes de
+            <tr><td><code>tests/test-tailwind.html</code>, <code>tests/test-bootstrap.html</code></td><td>—</td><td>Testes de
                 convivência com Tailwind 4 e Bootstrap 5.3, carregados por CDN (precisam de internet).</td></tr>
           </tbody>
         </table>
@@ -542,11 +542,11 @@
 
       <section id="doc-testes">
         <h2>Testes</h2>
-        <p>Abra <a href="tests.html"><code>tests.html</code></a> no navegador e confira se todas as linhas aparecem em
+        <p>Abra <a href="tests/tests.html"><code>tests/tests.html</code></a> no navegador e confira se todas as linhas aparecem em
           verde. A página carrega só o <code>page-presenter.css</code>, o que também confirma que a moldura funciona
           sem o tema.</p>
-        <p><a href="test-tailwind.html"><code>test-tailwind.html</code></a> e
-          <a href="test-bootstrap.html"><code>test-bootstrap.html</code></a> carregam o framework por CDN e conferem a
+        <p><a href="tests/test-tailwind.html"><code>tests/test-tailwind.html</code></a> e
+          <a href="tests/test-bootstrap.html"><code>tests/test-bootstrap.html</code></a> carregam o framework por CDN e conferem a
           convivência:</p>
         <ul>
           <li>os slides não herdam regras de <code>section</code> da página;</li>
@@ -557,7 +557,7 @@
         </ul>
         <p>Os botões dessas páginas permitem conferir o visual à mão.</p>
         <p>As páginas também rodam sem interface, no Chrome ou no Edge:</p>
-        <pre><code>chrome --headless=new --virtual-time-budget=8000 --dump-dom file:///caminho/tests.html | grep -o 'class="fail"' | wc -l</code></pre>
+        <pre><code>chrome --headless=new --virtual-time-budget=8000 --dump-dom file:///caminho/tests/tests.html | grep -o 'class="fail"' | wc -l</code></pre>
         <p>O resultado <code>0</code> significa que nenhuma verificação falhou.</p>
       </section>
     </article>

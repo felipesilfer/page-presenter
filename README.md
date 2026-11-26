@@ -43,6 +43,21 @@ A página continua sendo a fonte do conteúdo. O módulo copia os blocos dela pa
 
 Chame `open()` a partir de um clique. Sem um gesto do usuário, o navegador recusa a tela cheia, e a apresentação ocupa só a janela.
 
+### Pela CDN
+
+Para não copiar os arquivos para o seu projeto, carregue-os do GitHub pelo [jsDelivr](https://www.jsdelivr.com/):
+
+```html
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/felipesilfer/page-presenter@v0.2.0/page-presenter.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/felipesilfer/page-presenter@v0.2.0/page-presenter-deck.css">
+<script src="https://cdn.jsdelivr.net/gh/felipesilfer/page-presenter@v0.2.0/page-presenter.js"></script>
+```
+
+- **Fixe a versão** (`@v0.2.0`). O arquivo de uma tag não muda e fica em cache permanente. As versões disponíveis estão nas [tags do repositório](https://github.com/felipesilfer/page-presenter/tags).
+- **`@0.2`** pega a versão 0.2.x mais recente. **`@master`** pode levar até 12 horas para refletir um push. Evite os dois em produção.
+- **Minificado:** troque `.js` por `.min.js` e `.css` por `.min.css`. O jsDelivr gera esses arquivos.
+- A CDN precisa de internet. Para apresentar offline, use cópias locais dos três arquivos.
+
 ## Arquivos
 
 | Arquivo | Obrigatório | Conteúdo |
@@ -254,6 +269,8 @@ A moldura foi feita para conviver com os resets dos frameworks (Preflight do Tai
   @import "./page-presenter.css" layer(components);
   @import "./page-presenter-deck.css" layer(components);
   ```
+
+  Pela CDN, troque `./page-presenter.css` pela URL completa do jsDelivr.
 
 - **Tailwind 3:** não usa camadas nativas, então quem vence é a ordem dos arquivos. Carregue os CSS do módulo antes do CSS gerado pelo Tailwind.
 

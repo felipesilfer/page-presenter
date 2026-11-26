@@ -198,6 +198,22 @@
 &lt;/script&gt;</code></pre>
         <p>Chame <code>open()</code> a partir de um clique. Sem um gesto do usuário, o navegador recusa a tela cheia, e
           a apresentação ocupa só a janela.</p>
+        <h3>Pela CDN</h3>
+        <p>Para não copiar os arquivos para o seu projeto, carregue-os do GitHub pelo
+          <a href="https://www.jsdelivr.com/">jsDelivr</a>:</p>
+        <pre><code>&lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/felipesilfer/page-presenter@v0.2.0/page-presenter.css"&gt;
+&lt;link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/felipesilfer/page-presenter@v0.2.0/page-presenter-deck.css"&gt;
+&lt;script src="https://cdn.jsdelivr.net/gh/felipesilfer/page-presenter@v0.2.0/page-presenter.js"&gt;&lt;/script&gt;</code></pre>
+        <ul>
+          <li><strong>Fixe a versão</strong> (<code>@v0.2.0</code>). O arquivo de uma tag não muda e fica em cache
+            permanente. As versões disponíveis estão nas
+            <a href="https://github.com/felipesilfer/page-presenter/tags">tags do repositório</a>.</li>
+          <li><strong><code>@0.2</code></strong> pega a versão 0.2.x mais recente. <strong><code>@master</code></strong>
+            pode levar até 12 horas para refletir um push. Evite os dois em produção.</li>
+          <li><strong>Minificado:</strong> troque <code>.js</code> por <code>.min.js</code> e <code>.css</code> por
+            <code>.min.css</code>. O jsDelivr gera esses arquivos.</li>
+          <li>A CDN precisa de internet. Para apresentar offline, use cópias locais dos três arquivos.</li>
+        </ul>
       </section>
 
       <section id="doc-arquivos">
@@ -488,6 +504,7 @@
         <pre><code>@import "tailwindcss";
 @import "./page-presenter.css" layer(components);
 @import "./page-presenter-deck.css" layer(components);</code></pre>
+        <p>Pela CDN, troque <code>./page-presenter.css</code> pela URL completa do jsDelivr.</p>
         <ul>
           <li><strong>Tailwind 3:</strong> não usa camadas nativas, então quem vence é a ordem dos arquivos. Carregue
             os CSS do módulo antes do CSS gerado pelo Tailwind.</li>
